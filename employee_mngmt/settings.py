@@ -43,7 +43,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'frontend'
+    'frontend',
+    'widget_tweaks',
+    'template_helpers',
+    'dal',
+    'dal_select2'
 ]
 
 MIDDLEWARE = [

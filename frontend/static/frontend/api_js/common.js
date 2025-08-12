@@ -44,7 +44,7 @@ $(document).ready(function() {
                   userData = response
                   if (document.getElementById('username')) document.getElementById('username').innerText = userData.email;
                   if (document.getElementById('fullName')) document.getElementById('fullName').innerText = userData.full_name;
-                  if (document.getElementById('group_name')) document.getElementById('group_name').innerText = userData.title;
+                  // if (document.getElementById('group_name')) document.getElementById('group_name').innerText = userData.title;
             },
             error: function(xhr, status, error) {
                   console.error('Error checking permissions:', error);

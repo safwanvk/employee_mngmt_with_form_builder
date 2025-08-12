@@ -5,8 +5,8 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticated
-from .serializers import UserProfileSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from .serializers import UserProfileSerializer, RegisterSerializer
 from django.http import JsonResponse
 from rest_framework import status
 from django.contrib.auth import login, logout
@@ -14,9 +14,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
-import employee_mngmt.exceptions as ApiExceptions
 from employee_mngmt.utils import apiSuccess
 from django.utils.translation import ngettext  as _
+from rest_framework.exceptions import APIException
+import employee_mngmt.exceptions as ApiExceptions
 
 # Create your views here.
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -88,3 +89,16 @@ class UserHasPermission(APIView):
                   raise ApiExceptions.InternalServerError(detail=_("User permission checking is failed."))
 
             return Response(apiSuccess(data=resp), status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def registration(request):
+      if request.method == "POST":
+            try:
+                  serializer = RegisterSerializer(data=request.data)
+                  if not serializer.is_valid():
+                        raise APIException(serializer.errors , status.HTTP_400_BAD_REQUEST)
+                  serializer.save()
+                  return Response({'detail':'Registration success.'}, status.HTTP_201_CREATED)
+            except Exception as e:
+                  print(e)

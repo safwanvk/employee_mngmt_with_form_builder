@@ -1,3 +1,4 @@
+{% extends 'frontend/account_base.html' %}
 {% load static %}
 {% load widget_tweaks %}
 {% comment %} {% load afl_language %} {% endcomment %}
@@ -7,13 +8,10 @@
 
 {% block content %}
 
-<div class="m-content">
-  <div class="m-portlet m-portlet--mobile">
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="loader" id="loader" style="display:none"></div>
-       {% if form %}
-        <form method="{{form.method|default:'POST'}}" {% if form.id %} id="{{form.id}}"{% endif %} class="{{form.class}} m-form m-form--label-align-right" action="{{form.action|default:request.path}}"  {% if files %} enctype="multipart/form-data"{% endif %} autocomplete="new"  novalidate >
+<div class="col-lg-6 right-container my-auto">
+	<p class="title">{% trans "Sign up to proceed" %}</p>
+	<div class="card-login">
+		<form method="{{form.method|default:'POST'}}" {% if form.id %} id="{{form.id}}"{% endif %} class="{{form.class}} m-form m-form--label-align-right" action="{{form.action|default:request.path}}"  {% if files %} enctype="multipart/form-data"{% endif %} autocomplete="new"  novalidate >
         	{% comment %} {% if form.is_multilingual %}
         	    {{form|afl_default_language_tag}}
         	{% endif %} {% endcomment %}
@@ -114,25 +112,11 @@
           
 
           <div class="m-form__actions">
-              <button class="btn btn-brand m-btn m-btn--custom m-btn--pill m-btn--wide m-btn--bolder m-btn--sm" id="add-staff">{% trans 'Create User' %}</button>
+              <button class="btn btn-brand m-btn m-btn--custom m-btn--pill m-btn--wide m-btn--bolder m-btn--sm mt-3" id="add-staff">{% trans 'Create User' %}</button>
           </div>
                 
        </form>
-       {% else %}
-          <div class="m-portlet m-portlet--mobile bg-transparent box-shadow-0">
-               <div class="payout-earnings-wrapper" id="modify-wrapper">
-                    <div class="payout-earnings-block">
-                         <div class="row no-gutters">
-                              {% trans 'Please wait until you become part of MLM.Your request is being processed.' %}
-                         </div>
-                    </div>
-            </div>
-          </div>  
-       {% endif %}
-      </div>
-
-    </div>
-  </div>
+	</div>
 </div>
 {% endblock %}
 {% block javascript %}
@@ -258,12 +242,7 @@ var rules = {
       number:true,
       minlength: 4,
       maxlength :12,
-    },
-    title: {
-      required: true,
-      minlength: 4,
-      maxlength :120,
-    },
+    }
 };
 
 
@@ -292,45 +271,33 @@ var messages = {
     rules: rules,
     messages: messages,
     submitHandler: function(form) {
-      swal({
-          title: "{% trans 'Are you sure?' %}",
-          text: `{% trans "You won't be able to revert this!" %}`,
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          cancelButtonText: "{% trans 'Cancel' %}",
-          confirmButtonText: "{% trans 'Yes, Select It!' %}"
-      }).then((result) => {
-          if (result.value) {
-            showLoader()
-            var formData = new FormData(document.getElementById('register-form'));
-            callApi({
-              url: serverUrl + addStaffUrl,
-              method: 'POST',
-              data: formData,
-              processData: false,
-              contentType: false,
-              success: function(response) {
-                hideLoader();
-                toastr.success("Staff created successfully!");
-                setTimeout(function() {
-                  window.location.reload();
-                }, 500);
-              },
-              error: function(xhr, status, error) {
-                hideLoader();
-                if (xhr.status === 401 || xhr.status === 403) {
-                  window.location.href = dashboardUrl
-                } else if (xhr.status === 400) {
-                  console.log(xhr, error)
-                  setErrorMessage(xhr.responseJSON)
-                } else {
-                  toastr.error("Something went wrong please try again");
-                }
-              }
-            });
+      
+      showLoader()
+      var formData = new FormData(document.getElementById('register-form'));
+      callApi({
+        url: serverUrl + signUpUrl,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          hideLoader();
+          toastr.success("Registration successfully!");
+          setTimeout(function() {
+            window.location.href = loginWebUrl;
+          }, 500);
+        },
+        error: function(xhr, status, error) {
+          hideLoader();
+          if (xhr.status === 401 || xhr.status === 403) {
+            window.location.href = dashboardUrl
+          } else if (xhr.status === 400) {
+            console.log(xhr, error)
+            setErrorMessage(xhr.responseJSON)
+          } else {
+            toastr.error("Something went wrong please try again");
           }
+        }
       });
     },
     invalidHandler: function(event, validator) {

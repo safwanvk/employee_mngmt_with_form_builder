@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from .decorators import render_method
 from django.views import View
 from django.utils.translation import gettext_lazy as _
-from .forms import (UserLoginForm)
+from .forms import (UserLoginForm, SignUpForm)
 from django.conf import settings
 
 # Create your views here.
@@ -94,3 +94,20 @@ class ProfileView(View):
             render_context['return_type'] = 'template_response'
             render_context['template'] = self.template
             return render_context
+
+@method_decorator(render_method(), name='dispatch')
+class Signup(View):
+	template = 'frontend/user/signup.html'
+	def get(self, request, *args, **kwargs):
+		context = {}
+		initial = {}
+		initial['request'] = request
+		form = SignUpForm(initial=initial)
+		form.id = "register-form"
+		context['form'] = form
+		context['theme_group'] = 'backoffice'
+		render_context = {}
+		render_context['context'] = context
+		render_context['return_type'] = 'template_response'
+		render_context['template'] = self.template
+		return render_context
