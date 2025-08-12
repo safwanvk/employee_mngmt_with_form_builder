@@ -1,0 +1,101 @@
+/* Miscellanoeous */
+body,
+html {
+  overflow-x: hidden;
+  padding-right: 0 !important; // resets padding right added by Bootstrap modal
+}
+
+*:-moz-full-screen,
+*:-webkit-full-screen,
+*:fullscreen *:-ms-fullscreen {
+  overflow: auto;
+}
+
+.container-scroller {
+  overflow: hidden;
+}
+
+
+
+.page-header {
+  @extend .d-flex;
+  // @extend .justify-content-between;
+  // @extend .align-items-center;
+  flex-direction: column;
+  margin: 0 0 1.5rem 0;
+  .breadcrumb {
+    border: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    
+    .breadcrumb-item {
+      opacity: 0.3;
+      &.active{
+        opacity: 1;
+      }
+    }
+    
+  }
+}
+.bg-gradient-brand{
+  box-shadow: 0px 3px 8.3px 0.7px lighten($brand-color,50%);
+  background-image: linear-gradient($brand-color,$brand-color-light);
+}
+.page-title {
+  color: $page-title-color;
+  font-size: 1.125rem;
+  margin-bottom: 0;
+  font-weight: 600;
+  .page-title-icon {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    text-align: center;
+    
+    i {
+      font-size: .9375rem;
+      line-height: 36px;
+    }
+  }
+}
+
+.form-select{
+  --bs-form-select-bg-img:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-caret-down' viewBox='0 0 16 16'%3E%3Cpath d='M3.204 5h9.592L8 10.481zm-.753.659 4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659'/%3E%3C/svg%3E");
+  background-size: 23px 17px;
+  padding: 0.50rem 1.375rem;
+  min-width: 150px;
+  font-size: 0.75rem;
+  color: rgba($body-color,0.8);
+}
+.positioning-sidebar{
+  position: fixed;
+  width: inherit;
+  height: 100%;
+}
+
+.nav.nav2{
+  position: absolute;
+  bottom: 82px;
+  width: 100%;
+}
+.bg-green-light{
+  background-color: #DCFCE7;
+}
+.bg-violet-light{
+  background-color: #F3E8FF;
+}
+.bg-red-light{
+  background-color: #FFE2E5;
+}
+.bg-orange-light{
+  background-color: #FFF4DE;
+}
+.card-flex{
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.highcharts-legend-item.highcharts-pie-series text{
+  font-size: 0.7rem !important;
+}

@@ -1,0 +1,65 @@
+/* .margin_center{margin-top: 117px;}
+.font_color{color: white;}
+.pckg_div {float: left;margin: 10px;}
+.pckg_title {padding: 10px;}
+.pckg_socialdiv i{height: 50px;width: 50px;line-height: 50px;text-align: center;font-size: 17px;}
+.pckg_socialdiv ul{padding-left:0 ;}
+.pckg_socialdiv li{display: inline-block;margin-right: 5px;outline: none;}
+.pckg_socialdiv .fa-instagram{border-radius: 50%;background-color: #E9507C;color: #fff;}
+.pckg_socialdiv .fa-facebook-f {border-radius: 50%;background-color: #5175E3;color: #fff;}
+.pckg_socialdiv .fab.fa-google-plus-g {border-radius: 50%;background-color: #34BEA4;color: #fff;}
+.pckg_socialdiv .fab.fa-linkedin-in {border-radius: 50%;background-color: #716ACA;color: #fff;}
+.pckg_socialdiv .fab.fa-twitter {border-radius: 50%;background-color: #83ca4c;color: #fff;}
+#prof_bg_image img{height:320px;}
+
+.progress-bar-green{background-color:#31B332}
+.m-b-xs.clearfix {margin-bottom: 7px;}
+.memb-join-progress-block{padding: 50px 0 0 0;}
+
+
+a.m-nav-grid__item {
+    position: relative;
+}
+span.todo-finished {
+    top: 20px;
+    right: 30px;
+    position: absolute;
+    background: #25612b;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    line-height: 26px;
+    color: #fff;
+}
+
+i.m-nav-grid__icon.fa {
+    margin-bottom: 15px;
+}
+#next_icon{color:#999;opacity: 0;}
+#next_icon:hover{opacity: 0.7;}
+
+.select_text{color:#F9BF3C;font-size:medium}
+.nav-link.active{cursor: auto;}
+.revenue_val{margin-left: 40px; display: block !important;}
+img.loader_img{ width:40px!important; height:40px; position: absolute;top:50%;left:50%;}
+.la-refresh{font-size: 22px !important;} */
+
+.calendarTooltip {
+    position: absolute;
+    z-index: 10001;
+    border-radius: 6px;
+    padding: 3px;
+    margin: 4px;}
+.tooltipArrow {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+}
+.tooltipContent {
+    padding: 2px;
+}

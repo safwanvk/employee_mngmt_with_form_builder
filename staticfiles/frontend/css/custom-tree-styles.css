@@ -1,0 +1,11 @@
+.m-btn--icon.m-btn--icon-only.afl-zoom-out,.m-btn--icon.m-btn--icon-only.afl-zoom-in,.m-btn--icon.m-btn--icon-only.afl-zoom-refresh{width: 45px;height: 45px;}
+
+
+/* Geneology info styles starts. */
+.genealogy-info-wrapper .genealogy-info-content{position: absolute; top: 70px; right: 0; width: 190px; z-index: 90;display:none; }
+.genealogy-info-wrapper .genealogy-info-content.show{display:block;}
+.genealogy-info-wrapper .genealogy-info-content:before { content: ""; position: absolute; top: -8px; right: 18px; height: 0px; width: 0px; border-left: solid 10px transparent; border-bottom: solid 10px #fff; border-right: solid 10px transparent; z-index: 89; }
+.genealogy-info-wrapper .genealogy-info-content .genealogy-info-content-inner{-webkit-border-radius: 5px;border-radius: 5px;padding:15px;background: #fff; -webkit-box-shadow: 0px 1px 25px 1px rgb(69 65 78 / 19%); box-shadow: 0px 1px 25px 1px rgb(69 65 78 / 19%); background-color: #fff;}
+.genealogy-info-wrapper .genealogy-info-btn{background:green;width: 45px;height: 45px;}
+.genealogy-info-wrapper .genealogy-info-content .genealogy-info-content-inner .user-image{-webkit-border-radius: 5px; border-radius: 5px; border: 1px solid #8080801a; width: 40px; height: 40px; padding: 2px;}
+/* Geneology info styles ends. */
