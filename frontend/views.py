@@ -43,10 +43,54 @@ class AflDasboardView(View):
             render_context = {}
             self.context = {}
 
-            if not request.user.is_authenticated:
-                  return redirect('login_url')
-
             # Dashboard Widget visibility settings
             self.context['settings'] = settings
             context = {'template' : self.template_name, 'context':self.context, 'return_type' : 'template_response'}
             return context
+
+@method_decorator(render_method(), name='dispatch')
+class ProfileView(View):
+      template = 'frontend/user/profile-view.html'
+
+      def prepare_breadcrumbs(self,request,context):
+
+            context['label'] = _('Profile Info')
+            context['breadcrumbs'].update({
+                  1:{
+                        'label':_('Profile'),
+                        'url'  : 'profile_view'
+                  }
+            })
+            return context
+
+      def get(self, request, *args, **kwargs):
+            context = {}
+            general_fields = [
+                  {
+                        'key': 'email',
+                        'text': _('Email'),
+                  },
+                  {
+                        'key': 'phone_number',
+                        'text': _('Phone Number'),
+                  },
+                  {
+                        'key': 'full_name',
+                        'text': _('Full Name'),
+                  }
+            ]
+            context['general_fields'] = general_fields
+            context['theme_group'] = 'backoffice'
+            context['breadcrumbs'] = {
+                        0: {
+                              'icon': "bi bi-house",
+                              'url' : 'dashboard'
+                  },
+
+                        }
+            context = self.prepare_breadcrumbs(request,context)
+            render_context = {}
+            render_context['context'] = context
+            render_context['return_type'] = 'template_response'
+            render_context['template'] = self.template
+            return render_context
