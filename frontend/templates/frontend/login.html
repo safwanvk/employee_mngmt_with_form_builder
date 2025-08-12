@@ -1,0 +1,69 @@
+{% extends 'frontend/account_base.html' %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Login To Your Account" %}{% endblock %}
+{% block content %}
+{% comment %} {% load widget_tweaks %} {% endcomment %}
+<div class="col-lg-6 right-container my-auto">
+	<p class="title">{% trans "Login to proceed" %}</p>
+	<div class="card-login">
+		<form class="m-login__form m-form" id="user-login-form" method="post" novalidate>
+			{% csrf_token %}
+			<div class="inpt-grp">
+				<i class="bi bi-person"></i>
+				<input type="text" id="id_email" placeholder="{% trans 'Enter email' %}"/>
+			</div>
+			<div class="inpt-grp">
+				<i class="bi bi-key"></i>
+				<input type="password" id="id_password" placeholder="******" autocomplete="off"/>
+				<div class="custom-control custom-checkbox pt-1 password-field">
+					<input class="custom-control-input toggle-password" style="display:none" data-attr-id="id_password" name="checkbox-id_password" id="checkbox-id_password" type="checkbox">
+					<label class="bi bi-eye id_password-password-icon" for="checkbox-id_password"></label>
+				</div>
+			</div>
+	  		<button type="submit" class="btn btn-brand">{% trans "Login" %}</a>
+	  		{% comment %} <p class="secondary-txt">Forgot password</p> {% endcomment %}
+		</form>
+	</div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+	$(document).ready(function() {
+		callApi({
+			url: serverUrl + getUserProfileUrl,
+			method: 'GET',
+			currentPath: 'login',
+			success: function(response) {
+				if (response.status_code === 200) {
+					window.location.href = dashboardUrl
+				}
+			  // Handle successful API response
+			},
+			error: function(xhr, status, error) {
+				if (xhr.status === 401) {
+				} else {
+					toastr.error("Something went wrong please try again");
+				}
+			}
+		})
+	});
+      $(document).ready(function () {
+		$(".toggle-password").on('click', function () {
+			var passwordId = $(this).data('attr-id');
+			if ($("#" + passwordId).attr("type") == "password") {
+				$("#" + passwordId).attr("type", "text");
+				$("." + passwordId+"-password-icon").toggleClass("bi-eye-slash bi-eye");
+			} else {
+				$("#" + passwordId).attr("type", "password");
+				$("." + passwordId+"-password-icon").toggleClass("bi-eye bi-eye-slash");
+			}
+		});
+	});
+</script>
+{% endblock %}
+{% block stylesheet %}
+<link href="{% static 'frontend/assets/css/style.css' %}" rel="stylesheet" type="text/css" />
+{% endblock %}
+

@@ -9,7 +9,14 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import UserProfileSerializer
 from django.http import JsonResponse
 from rest_framework import status
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
+import employee_mngmt.exceptions as ApiExceptions
+from employee_mngmt.utils import apiSuccess
+from django.utils.translation import ngettext  as _
 
 # Create your views here.
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -41,3 +48,43 @@ def authUser(request):
             user = request.user
             userserializer = UserProfileSerializer(user)
             return JsonResponse(userserializer.data, status=status.HTTP_200_OK)
+
+class LogoutView(APIView):
+      permission_classes = (IsAuthenticated,)
+      authentication_classes = [JWTAuthentication]
+
+      def post(self, request):
+            refresh_token = request.data.get("refresh_token")
+            if not refresh_token:
+                  return Response({"detail": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                  token = RefreshToken(refresh_token)
+                  token.blacklist()
+            except TokenError as e:
+                  return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
+            logout(request)
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+
+class UserHasPermission(APIView):
+      """
+                  User permission view
+      """
+      permission_classes = [IsAuthenticated]
+      authentication_classes = [JWTAuthentication]
+      def post(self, request, *args, **kwargs):
+            try:
+                  resp = {}
+                  req_data = request.data
+                  codenames = req_data.get('codenames', [])
+                  for codename in codenames:
+                        has_permission = request.user.has_perm(codename)
+                        print(has_permission)
+                        resp[codename] = has_permission
+            except Exception as e:
+                  print(e)
+                  # apiErrorLog(request,e)
+                  raise ApiExceptions.InternalServerError(detail=_("User permission checking is failed."))
+
+            return Response(apiSuccess(data=resp), status=status.HTTP_200_OK)

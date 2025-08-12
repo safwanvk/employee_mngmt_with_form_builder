@@ -1,0 +1,30 @@
+.countdwn{
+    position: absolute;
+    right: 30px;
+    left: auto;
+    top: -7px;
+}
+#countdown{
+      padding: 6px 10px;
+      border-radius: 0px 15px 0 15px;
+      font-size: 16px;
+      width: 115px;
+    }
+    #countdown #tiles{
+        color: #fff;
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        width: 80px;
+        
+    }
+
+    .color-full {
+      background: var(--brand-color);
+    }
+    .color-half {
+      background: #ebc85d;
+    }
+    .color-empty {
+      background: #e5554e;
+    }

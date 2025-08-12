@@ -1,0 +1,5 @@
+var loginUrl = '/api/v1/token/'
+var refreshTokenUrl = '/api/v1/token/refresh/'
+var getUserProfileUrl = '/api/v1/users/me/'
+var logoutUrl = '/api/v1/logout/'
+var checkPermissionUrl = '/api/v1/check-permission/'

@@ -1,0 +1,355 @@
+{% extends "frontend/new_base.html" %}
+{% load static %}
+{% load i18n %}
+{% load templatehelpers %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="m-content">
+    <div class="m-portlet-center">
+            <div class="m-portlet m-portlet--full-height">
+                <div class="m-portlet__head">
+                    <div class="m-portlet__head-caption">
+                        <div class="m-portlet__head-title">
+                            <span class="m-portlet__head-icon">
+                <i class="flaticon-user m--font-primary"></i>
+              </span>
+                            <h3 class="m-portlet__head-text">
+                              {% if role == 'workflow' %}
+                              {% trans 'Edit Workflow' %}
+                              {% endif %}
+                                <small>{% trans 'Information' %}</small>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <form id="token-form" method="{{form.method|default:'POST'}}" class="{{form.class}} m-form" action="{{form.action|default:request.path}}" {% if files %} enctype="multipart/form-data" {% endif %}>
+
+
+                  <!-- ------------- -->
+                  <div class="m-portlet__body">
+                    {% if not token_included %}
+                    {% csrf_token %}
+                    {% endif %}
+
+                    <div class="container-fluid">
+                      {% if form.non_field_errors %}
+                      <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                        {{ error }}
+                        {% endfor %}
+                      </div>
+                      {% endif %}
+
+                      {% for hidden_field in form.hidden_fields %}
+                      {% comment %}
+                      {% if hidden_field.errors %}
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        {% for error in hidden_field.errors %}
+                        {{ error }}
+                        {% endfor %}
+
+                      </div>
+                      {% endif %}
+                      {% endcomment %}
+                      {{hidden_field}}
+                      {% endfor %}
+                    </div>
+                    <div class="row">
+                    {% for field in form.visible_fields %}
+                    
+                    {% if field.name != 'phone_number' and field.name != 'phone_code' %}
+                    <div class="col-md-6">
+                    <div class="form-group">
+                      {% if field.field.widget.is_toggle %}
+                      {% render_field field placeholder=field.label %}
+                      {% elif field.field.widget.input_type == 'checkbox' and field.field.widget.attrs.key != 'default_offer_checkbox_toggle' and field.field.widget.attrs.key != 'status_checkbox_toggle' %}
+
+                      <label class="m-checkbox m-checkbox--solid">
+                        {% I18n_advanced_label_tag field %}
+                        {% render_field field  placeholder=field.label %}
+                        <span></span>
+                      </label>          
+                      {% elif field.field.widget.attrs.placeholder %}   
+                        {% I18n_advanced_label_tag field %}
+                        <div>
+                          <div id="prefix-{{field.name}}" class="{{field_prefix_class}}">{{prefix_content}}</div>
+                          {% if extra %}
+                          {% comment %} {{ extra|getattribute:field.name|safe }} {% endcomment %}
+                          {% endif %}
+                        </div>
+                        <div class="pt-2">
+                          {% render_field field placeholder=field.field.widget.attrs.placeholder %}
+                          <div id="suffix-{{field.name}}" class="{{field_suffix_class}}">{{suffix_content}}</div>
+                        </div> 
+                      {% else %}   
+                      {% I18n_advanced_label_tag field %}
+                      {% comment %} {{form|afl_validate_help_text:field}}  {% endcomment %}
+                      <div>
+                        <div id="prefix-{{field.name}}" class="{{field_prefix_class}}">{{prefix_content}}</div>
+                        {% if extra %}
+                        {% comment %} {{ extra|getattribute:field.name|safe }} {% endcomment %}
+                        {% endif %}
+                      </div>
+                      <div class="pt-2 5">
+                        {% render_field field placeholder=field.label %}
+                        <div id="suffix-{{field.name}}" class="{{field_suffix_class}}">{{suffix_content}}</div>
+                      </div>
+                      {% endif %}
+                      {% if field.help_text %}
+                      {% comment %} <small class="form-text text-muted">
+                        {{ field.help_text|safe }}
+                      </small> {% endcomment %}
+                      {% endif %}
+                    </div>
+                  </div>
+                    {% elif field.name == 'phone_number' %}
+                    <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="required ">
+                      {% if form.phone_number and form.phone_code %}
+                      {{field.label}}{% if field.field.required %} *{% endif %}:
+                      </label>
+                      <div class="input-group mt-2">
+                       <div class="input-group-prepend" style="width:100px;">
+                         {% if form.phone_code %}
+                         {% with field=form.phone_code %}
+                         {% render_field field  placeholder=field.label %}
+                         {% endwith %}
+                         {% endif %}
+                       </div>
+                       {% if form.phone_number %}
+                       {% with field=form.phone_number %}
+                       {% render_field field  placeholder=field.label %}
+                       {% endwith %}
+                       {% endif %}
+                     </div>
+                     {% endif %}
+                   </div>  
+                  </div>
+                   {% endif %}
+                
+                   {% endfor %}
+                  </div>
+                 </div>
+                 <!-- ------------- -->
+                 <div class="m-portlet__foot m-portlet__foot--fit">
+                  <div class="m-form__actions">
+                    <div class="row">
+                      <div class="col-lg-9 m-3">
+                        {% if form.buttons %} {% if form.token_field.errors or not form.token_field.value %}
+
+                        <div id="buttons-parent" class="buttons">
+                          <div class="m-loader m-loader--brand custom-loader" style="width: 30px; display: none;"></div>
+                          <button type="submit" name="token_submit"  id="token-send" class=" btn btn-brand" disabled="disabled">
+                            {% trans 'Save changes'%}
+                          </button>
+                          <button type="reset" id="form-reset" class=" btn btn-warning">
+                            {% trans 'Clear'%}
+                          </button>
+                          <button type="button" name="back" onclick="window.history.back();" id="form-back" class=" btn btn-outline-dark">
+                            {% trans 'Back'%}
+                          </button>
+                        </div>
+
+                        {% else %} {% include 'buttons.html' with buttons=form.buttons %} {% endif %} {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </form>
+            </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheet %}
+<style type="text/css">
+  select {
+    appearance: auto !important;
+    background-color: white !important;
+  }
+</style>
+{% endblock %}
+
+
+
+{% block javascript %}
+
+  <script src="{% static 'backoffice/js/datatables.js' %}" type="text/javascript"></script>
+  <script src="{% static 'backoffice/js/bulk-opration-table.js' %}" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script type="text/javascript" src="{% static 'autocomplete_light/jquery.init.js' %}"></script>
+  <script type="text/javascript" src="{% static 'autocomplete_light/dal-custom/autocomplete.init.js' %}"></script>
+  <script type="text/javascript" src="{% static 'autocomplete_light/forward.js' %}"></script>
+  <script type="text/javascript" src="{% static 'autocomplete_light/select2.js' %}"></script>
+  <script type="text/javascript" src="{% static 'autocomplete_light/jquery.post-setup.js' %}"></script>
+  
+  {% if page_filter %}
+    {% include 'filter/filter.js' with page_filter=page_filter %}
+  {% endif %}
+
+  <script>
+  var initialValues = {};
+  var complaint_id = "{{ complaint_id }}";
+  var manage_complaints_url = "{{ manage_complaints }}"
+  var role = "{{ role }}"
+  function token_send(obj){
+    var formData = new FormData(document.getElementById('token-form'));
+    workflowCompliantUrl = workflowCompliantUrl.replace('<complaint_id>', complaint_id);
+    callApi({
+      url: serverUrl + workflowCompliantUrl,
+      method: 'PUT',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(response) {
+          toastr.success("Complaint workflow updated successfully!");
+          setTimeout(function() {
+            window.location.href = manage_complaints_url;
+          }, 500);
+      },
+      error: function(xhr, status, error) {
+        if (xhr.status === 401 || xhr.status === 403) {
+          window.location.href = dashboardUrl
+        } else if (xhr.status === 400) {
+          console.log(xhr, error)
+          setErrorMessage(xhr.responseJSON)
+        } else {
+          toastr.error("Something went wrong please try again");
+        }
+      }
+    });
+  }
+
+$(document).ready(function(){
+
+    $.validator.addMethod(
+      "regex",
+      function(value, element, regexp) {
+          var re = new RegExp(regexp);
+          return this.optional(element) || re.test(value);
+      },
+      "Please check your input."
+    );
+    var errorClass = 'invalid-feedback';
+    var rules = {
+    }
+    var messages = {
+    }
+    $('#token-form').validate({
+      rules:rules,
+      messages:messages,
+      submitHandler:(form) => {
+        token_send();
+      },
+      invalidHandler: (event, validator) => {
+          validator.showErrors();
+      },
+      onkeyup: false,
+      onfocusout:function(element){
+          this.element(element);
+      },
+      errorPlacement:(error, element) => {
+          if ($(element).attr('type') == 'checkbox'){
+              element.parent().find('.invalid-feedback').remove()
+              element.removeClass("is-valid");
+              element.addClass("is-invalid");
+          } else {
+              element.parent().find('.invalid-feedback').remove()
+              errorDiv = $('<div class="invalid-feedback"></div>');
+              errorDiv.append(error.text());
+              element.after(errorDiv);
+              element.removeClass("is-valid");
+              element.addClass("is-invalid");
+          }
+      },
+      success:(label,element) => {
+          $(element).parent().find(errorClass).remove()
+          $(element).removeClass("is-invalid");
+          $(element).addClass("is-valid");
+      }
+    });
+    getComplaintUrl = getComplaintUrl.replace('<complaint_id>', complaint_id);
+    callApi({
+      url: serverUrl + getComplaintUrl,
+      method: 'GET',
+      success: function(response) {
+        var complaintData = response;
+        $('form#token-form input, form#token-form select, form#token-form textarea').each(function() {
+          if (namesArray.includes($(this).attr('name'))){
+            if ($(this).attr('name') === 'status_remark') {
+              console.log(complaintData[$(this).attr('name')])
+              $('textarea[name="'+$(this).attr('name')+'"]').val(complaintData[$(this).attr('name')]).trigger('change');
+            } else if ($(this).attr('name') == 'status') {
+              $('select[name="'+$(this).attr('name')+'"]').val(complaintData[$(this).attr('name')])
+              initialValues[$(this).attr('name')] = $(this).val();
+            }
+            else {
+              $('input[name="'+$(this).attr('name')+'"]').val(complaintData[$(this).attr('name')]).trigger('change');
+            }
+            initialValues[$(this).attr('name')] = $(this).val();
+            changeChecking()
+          }
+        });
+      },
+      error: function(xhr, status, error) {
+            if (xhr.status === 401 || xhr.status === 403) {
+                  window.location.href = dashboardUrl
+            } else {
+                  toastr.error("Something went wrong please try again");
+            }
+      }
+    });
+
+    var namesArray = ['status', 'status_remark']
+
+    $("form#token-form").focusout( function(){
+      changeChecking()
+    })
+
+    $(document).on('click','#form-reset', function(){
+      event.preventDefault();
+      $('form#token-form input, form#token-form select, form#token-form textarea').each(function() {
+        var fieldName = $(this).attr('name');
+        $(this).val(initialValues[fieldName]);
+      });
+      $("#token-send").attr("disabled", true)
+      $("button[name='personal_details']").attr("disabled", true)
+      $('#token-form').find('.invalid-feedback').remove()
+      changeChecking()
+    })
+
+    function changeChecking(){
+      var current_values = {}
+
+      $('form#token-form input, form#token-form select, form#token-form textarea').each(function() {
+        var elementName = $(this).attr('name');
+        if (namesArray.includes(elementName)){
+          current_values[elementName] = $(this).val();
+        }
+      });
+
+      var isSame = true;
+      console.log(initialValues, current_values)
+      namesArray.forEach( value => {
+        if (initialValues[value] != current_values[value]) {
+          isSame = false;
+          return false;
+        }
+      });
+      console.log("is same", isSame);
+      if (isSame){
+        $("#token-send").attr("disabled", true)
+        $("button[name='personal_details']").attr("disabled", true)
+      }else{
+        $("#token-send").attr("disabled", false)
+        $("button[name='personal_details']").attr("disabled", false)
+      }
+    }
+  })
+</script>
+{% endblock %}

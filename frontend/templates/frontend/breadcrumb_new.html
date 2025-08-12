@@ -1,0 +1,91 @@
+{% load templatehelpers i18n static %}
+{% if breadcrumbs %}
+
+{% comment %} <div class="m-breadcrumbs">
+    <ul class="m-breadcrumbs__nav m-nav m-nav--inline">
+        <li id="backBtn" class="m-nav__item m-nav__item-back">
+            <a class="m-nav__link m-nav__link--icon " href='#' onclick=window.history.back(); title="{% trans 'Go To Previous Window'%}">
+                <i class="m-nav__link-icon la la-angle-left"></i>
+                <span class="m-nav__link-text">{% trans 'Back'%}</span>
+            </a>
+        </li>
+        {% for key, value in breadcrumbs.items %}
+            <li class="m-nav__item{% if not value.label and value.icon %} m-nav__item--home{% endif %}">
+                <a href="{% if value.url %}{% breadcrumb_url value.url request %}{% else %}javascript:void(0);{% endif %}" class="m-nav__link{% if not value.url %} m-nav__link-disabled{% endif %}{% if value.icon %} m-nav__link--icon{% endif %} {{value.attrs.class}}"{% if value.label %} title="{{value.label}}"{% endif %}{% if value.attrs.id %} id="{{value.attrs.id}}"{% endif %}>
+                    {% if value.icon %}{{value.icon|safe}}{% endif %}
+                    {% if value.label %}
+                        <span class="m-nav__link-text">{{value.label}}</span>
+                    {% endif %}
+                </a>
+            </li>
+            {% if not forloop.last %}
+                <li class="m-nav__separator">/</li>
+            {% endif %}
+        {% endfor %}
+        {% if label %}
+            <li class="m-nav__separator">/</li>
+            <li class="m-nav__item">
+                <div class="m-nav__label">
+                    <span class="m-nav__label-text">{% if mainlabel %} {{mainlabel}} {% else %} {% trans label %} {% endif %}</span>
+                </div>
+            </li>
+        {% endif %}
+    </ul>
+</div> {% endcomment %}
+<div class="page-header">
+    <h3 class="page-title">
+        {% if mainlabel %} {{mainlabel}} {% else %} {% trans label %} {% endif %}
+    </h3>
+    <nav aria-label="breadcrumb">
+      <ul class="breadcrumb">
+        {% for key, value in breadcrumbs.items %}
+            <li class="breadcrumb-item">
+                <a style="text-decoration:none" href="{% if value.url %}{% breadcrumb_url value.url request %}{% else %}javascript:void(0);{% endif %}" class="m-nav__link{% if not value.url %} m-nav__link-disabled{% endif %}{% if value.icon %} m-nav__link--icon{% endif %} {{value.attrs.class}}"{% if value.label %} title="{{value.label}}"{% endif %}{% if value.attrs.id %} id="{{value.attrs.id}}"{% endif %}>
+                    <i class="{% if value.icon %}{{value.icon|safe}}{% endif %}"></i>
+                    {% if value.label %}
+                        <span class="m-nav__link-text">{{value.label}}</span>
+                    {% endif %}
+                </a>
+            </li>
+            {% comment %} {% if not forloop.last %}
+                <li class="breadcrumb-item active" aria-current="page">
+            {% endif %} {% endcomment %}
+        {% endfor %}
+        {% if label %}
+            <li class="breadcrumb-item active" aria-current="page">
+            <span></span>{% if mainlabel %} {{mainlabel}} {% else %} {% trans label %} {% endif %}
+            </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+{% endif %}
+
+{% block stylesheet %}
+<style>
+    .page-header .breadcrumb .breadcrumb-item {
+        opacity: 1.3;
+    }
+</style>
+{% endblock%}
+
+{% block javascript%}
+
+{% comment %} For removing back button on the breadcrumb while opening a window in new tab {% endcomment %}
+
+<script>
+    window.addEventListener("load", (event) => {
+        let btn = document.getElementById('backBtn');
+        if (btn) {
+            if (history.length < 2){
+                btn.style.display = "none"
+                localStorage.setItem('prevUrl', window.location.href)   
+            }  
+            if (window.location.href == localStorage.getItem('prevUrl')){
+                btn.style.display = "none"
+            }
+        }
+      });
+</script>
+
+{% endblock %}

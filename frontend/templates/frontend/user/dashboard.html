@@ -1,0 +1,70 @@
+{% extends "frontend/new_base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block stylesheet %}
+<style type="text/css">
+	@keyframes loading1 {
+		40% {
+			background-position:
+				100% 0;
+		}
+		100% {
+			background-position:
+				100% 0;
+		}
+	  }
+</style>
+{% endblock %}
+{% block content %}
+
+		<div class="page-header">
+			<h3 class="page-title">
+			<span class="page-title-icon bg-gradient-brand text-white me-2">
+				<i class="bi bi-house"></i>
+			</span> {% trans 'Dashboard' %}
+			</h3>
+		</div>
+		
+
+		<div class="m-content">
+			{% if settings.FIREBASE_CONFIG and settings.FIREBASE_CONFIG.ENABLED %}
+				<div id="push-perm">
+				</div>
+			{% endif %}
+
+			<div class="row">
+			</div>
+		</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+<script src="{% static 'frontend/assets/js/highchart.js' %}"></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.15/index.global.min.js'></script>
+<script>
+	function waitForIsAdminValue() {
+		return new Promise((resolve) => {
+			const intervalId = setInterval(() => {
+				const isAdminElement = document.getElementById('isAdminLabel');
+				if (isAdminElement && isAdminElement.value) {
+					clearInterval(intervalId);
+					resolve(isAdminElement.value);
+				}
+			}, 100); // Check every 100ms
+		});
+	}
+	document.addEventListener('DOMContentLoaded', async function() {
+		const message = localStorage.getItem('toastrErrorMessage');
+		localStorage.removeItem('toastrErrorMessage');
+		if (message) {
+		  toastr.warning("{% trans '" + message + "' %}");
+		}
+		});
+</script>
+{% endblock %}

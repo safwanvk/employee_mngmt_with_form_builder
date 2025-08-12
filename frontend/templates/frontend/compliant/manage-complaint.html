@@ -1,0 +1,461 @@
+{% extends "frontend/manage_members_direct_db_new.html" %}
+{% load static %}
+{% load i18n %}
+
+
+{% block extrafields %}
+	<td>{{ object.groups__name}}</td>
+
+
+{% endblock %}
+
+{% comment %} {% block extra_actions %}
+<div class="btn-actions">
+	<a href="{% abs_url 'manage_members-edit' request uname=object.username role='staff' %}?redirect=true&from=manage_staffs" class="btn btn-sm btn-svg-icon btn-icon--lite btn-icon--active-brand" data-toggle="m-tooltip" data-content="{% trans 'Edit Profile' %}">
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="m-svg-icon"> <g><path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="#000000"></path> <path d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z" fill="#000000"></path></g></svg>
+	</a>
+
+	<a href="{% abs_url 'manage_members-password' request uname=object.username role='staff' %}?redirect=true&from=manage_staffs" class="btn btn-sm btn-svg-icon btn-icon--lite btn-icon--active-brand" data-toggle="m-tooltip" data-content="{% trans 'Change Password' %}">
+		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="m-svg-icon">
+		    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+		        <mask fill="white">
+		            <use xlink:href="#path-1"/>
+		        </mask>
+		        <g/>
+		        <path d="M15.6274517,4.55882251 L14.4693753,6.2959371 C13.9280401,5.51296885 13.0239252,5 12,5 C10.3431458,5 9,6.34314575 9,8 L9,10 L14,10 L17,10 L18,10 C19.1045695,10 20,10.8954305 20,12 L20,18 C20,19.1045695 19.1045695,20 18,20 L6,20 C4.8954305,20 4,19.1045695 4,18 L4,12 C4,10.8954305 4.8954305,10 6,10 L7,10 L7,8 C7,5.23857625 9.23857625,3 12,3 C13.4280904,3 14.7163444,3.59871093 15.6274517,4.55882251 Z" fill="#000000"/>
+		    </g>
+		</svg>	
+	</a>
+   	<a href="{% abs_url 'manage-members-change-role' request uname=object.username %}" class="btn btn-sm btn-svg-icon btn-icon--lite btn-icon--active-brand" data-toggle="m-tooltip" data-content="{% trans 'Change Role' %}">
+		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="m-svg-icon">
+		    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+		        <polygon points="0 0 24 0 24 24 0 24"/>
+		        <path d="M18,14 C16.3431458,14 15,12.6568542 15,11 C15,9.34314575 16.3431458,8 18,8 C19.6568542,8 21,9.34314575 21,11 C21,12.6568542 19.6568542,14 18,14 Z M9,11 C6.790861,11 5,9.209139 5,7 C5,4.790861 6.790861,3 9,3 C11.209139,3 13,4.790861 13,7 C13,9.209139 11.209139,11 9,11 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"/>
+		        <path d="M17.6011961,15.0006174 C21.0077043,15.0378534 23.7891749,16.7601418 23.9984937,20.4 C24.0069246,20.5466056 23.9984937,21 23.4559499,21 L19.6,21 C19.6,18.7490654 18.8562935,16.6718327 17.6011961,15.0006174 Z M0.00065168429,20.1992055 C0.388258525,15.4265159 4.26191235,13 8.98334134,13 C13.7712164,13 17.7048837,15.2931929 17.9979143,20.2 C18.0095879,20.3954741 17.9979143,21 17.2466999,21 C13.541124,21 8.03472472,21 0.727502227,21 C0.476712155,21 -0.0204617505,20.45918 0.00065168429,20.1992055 Z" fill="#000000" fill-rule="nonzero"/>
+		    </g>
+		</svg>
+   	</a>
+   	<a href="{% abs_url 'staff-role-change-history' request uname=object.username %}" class="btn btn-sm btn-svg-icon btn-icon--lite btn-icon--active-brand" data-toggle="m-tooltip" data-content="{% trans 'Role History' %}">
+   		<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="m-svg-icon"> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <rect x="0" y="0" width="24" height="24"/> <path d="M10.9630156,7.5 L11.0475062,7.5 C11.3043819,7.5 11.5194647,7.69464724 11.5450248,7.95024814 L12,12.5 L15.2480695,14.3560397 C15.403857,14.4450611 15.5,14.6107328 15.5,14.7901613 L15.5,15 C15.5,15.2109164 15.3290185,15.3818979 15.1181021,15.3818979 C15.0841582,15.3818979 15.0503659,15.3773725 15.0176181,15.3684413 L10.3986612,14.1087258 C10.1672824,14.0456225 10.0132986,13.8271186 10.0316926,13.5879956 L10.4644883,7.96165175 C10.4845267,7.70115317 10.7017474,7.5 10.9630156,7.5 Z" fill="#000000"/> <path d="M7.38979581,2.8349582 C8.65216735,2.29743306 10.0413491,2 11.5,2 C17.2989899,2 22,6.70101013 22,12.5 C22,18.2989899 17.2989899,23 11.5,23 C5.70101013,23 1,18.2989899 1,12.5 C1,11.5151324 1.13559454,10.5619345 1.38913364,9.65805651 L3.31481075,10.1982117 C3.10672013,10.940064 3,11.7119264 3,12.5 C3,17.1944204 6.80557963,21 11.5,21 C16.1944204,21 20,17.1944204 20,12.5 C20,7.80557963 16.1944204,4 11.5,4 C10.54876,4 9.62236069,4.15592757 8.74872191,4.45446326 L9.93948308,5.87355717 C10.0088058,5.95617272 10.0495583,6.05898805 10.05566,6.16666224 C10.0712834,6.4423623 9.86044965,6.67852665 9.5847496,6.69415008 L4.71777931,6.96995273 C4.66931162,6.97269931 4.62070229,6.96837279 4.57348157,6.95710938 C4.30487471,6.89303938 4.13906482,6.62335149 4.20313482,6.35474463 L5.33163823,1.62361064 C5.35654118,1.51920756 5.41437908,1.4255891 5.49660017,1.35659741 C5.7081375,1.17909652 6.0235153,1.2066885 6.2010162,1.41822583 L7.38979581,2.8349582 Z" fill="#000000" opacity="0.3"/> </g></svg>
+   	</a> 
+</div> 
+{% endblock %} {% endcomment %}
+
+{% block javascript %}
+
+<script type="text/javascript">
+      
+var filter = {{ filter | safe }};
+var is_staff = {{ is_staff|safe }};
+let isFirstParam = true;
+function appendQueryParam(url, key, value) {
+    if (isFirstParam) {
+        isFirstParam = false;
+        return url + '?' + key + '=' + value;
+    } else {
+        return url + '&' + key + '=' + value;
+    }
+}
+window.onload = function() {
+	var searchParams = new URLSearchParams(new URL(window.location.href).search);
+	var loadUrl = serverUrl + getComplaintsUrl;
+	for (let key in filter) {
+        if (filter.hasOwnProperty(key)) {
+			var queryKey = searchParams.get(key);
+			if (queryKey) {
+				loadUrl = appendQueryParam(loadUrl, key, queryKey);
+			}
+		}
+	}
+	callApi({
+		url: loadUrl,
+		method: 'GET',
+		success: function(response) {
+			if (response.status_code === 200) {
+				if (response.data.count === 0 ){
+					showEmptyDataMessage()
+				} else populateTable(response.data);
+			}
+		},
+		error: function(xhr, status, error) {
+			if (xhr.status === 401 || xhr.status === 403) {
+                        window.location.href = dashboardUrl
+                  } else {
+				showEmptyDataMessage()
+                        toastr.error("Something went wrong please try again");
+                  }
+		}
+	});
+
+	for (let key in filter) {
+        if (filter.hasOwnProperty(key)) {
+			const initialFilterValue = getQueryParam(key);
+			if (initialFilterValue) {
+				document.getElementById(key).value = initialFilterValue;
+			}
+		}
+	}
+};
+
+function updateQueryParam(key, value) {
+    const url = new URL(window.location.href);
+	if (value) url.searchParams.set(key, value);
+    else url.searchParams.delete(key);
+    window.history.pushState({ path: url.href }, '', url.href);
+}
+
+if (document.getElementById('filter-button')) {
+      document.getElementById('filter-button').addEventListener('click', function() {
+            var formData = new FormData(document.getElementById('filter-form'))
+            for (let [name, value] of formData.entries()) {
+              if (name == 'csrfmiddlewaretoken') continue
+                  else updateQueryParam(name, value);
+          }
+            window.location.reload();
+      });
+}
+
+if (document.getElementById('filter-clear-button')) {
+      document.getElementById('filter-clear-button').addEventListener('click', function() {
+            var filterForm = document.getElementById('filter-form');
+            filterForm.reset();
+            var formData = new FormData(document.getElementById('filter-form'))
+            for (let [name, value] of formData.entries()) {
+              if (name == 'csrfmiddlewaretoken') continue
+                  else updateQueryParam(name, value);
+          }
+            window.location.reload();
+      });
+}
+
+function getQueryParam(key) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramValue = urlParams.get(key);
+	if (key === 'status') {
+		if (paramValue && ['true', 'false'].includes(paramValue)) {
+			return paramValue;
+		}
+	} else {
+		if (paramValue) {
+			return paramValue;
+		}
+	}
+    return null;
+}
+
+function formatTimestamp(timestamp) {
+	const date = new Date(timestamp);
+	const months = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.'];
+	const year = date.getFullYear();
+	const month = months[date.getMonth()];
+	const day = date.getDate();
+	const hour = date.getHours();
+	const minute = date.getMinutes();
+	const period = hour >= 12 ? 'p.m.' : 'a.m.';
+	const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+	const formattedMinute = minute < 10 ? '0' + minute : minute;
+	return `${month} ${day}, ${year}, ${formattedHour}:${formattedMinute} ${period}`;
+}
+
+function showEmptyDataMessage() {
+	// Show the empty data message
+	var emptyDataDiv = document.getElementById('manage-staff-no-data');
+	if (emptyDataDiv) {
+	    emptyDataDiv.style.display = 'block';
+	}
+
+	var DataDiv = document.getElementById('manage-staff-data-div');
+	if (DataDiv) {
+	    DataDiv.style.display = 'none';
+	}
+}
+
+function generatePaginationHTML(data) {
+	// Initialize pagination HTML variable
+	var paginationHTML = '';
+  
+	// Check if there is data available for pagination
+	if (data.count > 0 && data.results) {
+	    var page_obj = data.page_obj;
+	    if (data.count > 0) {
+		  paginationHTML += '<div class="left-container">';
+			paginationHTML += '<p class="mb-0">{% trans 'Showing' %} <span>' + page_obj.start_index + '</span> {% trans 'to' %} <span>' + page_obj.end_index + '</span> {% trans 'of' %} <span>' + data.count + '</span></p>';
+		  paginationHTML += '</div>';
+		  
+		  paginationHTML += '<div class="right-container">';
+		  paginationHTML += '<ul class="d-flex list-unstyled mb-0 list">';
+                  if (data.first) {
+                        paginationHTML += '<li><a class="btn t-foot-btn page-link" data-url="' + data.first + '"><i class="bi bi-chevron-double-left"></i></a></li>';
+                    }
+                    if (data.previous) {
+                        paginationHTML += '<li><a class="btn t-foot-btn page-link" data-page="' + (page_obj.number - 1) + '" data-url="' + data.previous + '"><i class="bi bi-chevron-left"></i></a></li>';
+                    }
+                    paginationHTML += '<li><a class="btn t-foot-btn active">' + page_obj.number + '</a></li>';
+                    if (data.next) {
+                        paginationHTML += '<li><a class="btn t-foot-btn page-link" data-page="' + (page_obj.number + 1) + '" data-url="' + data.next + '"><i class="bi bi-chevron-right"></i></a></li>';
+                    }
+                    if (data.last) {
+                        paginationHTML += '<li><a class="btn t-foot-btn page-link" data-url="' + data.last + '"><i class="bi bi-chevron-double-right"></i></a></li>';
+                    }
+                    
+		  paginationHTML += '</ul>';
+		  paginationHTML += '</div>';
+	    }
+	}
+
+	return paginationHTML;
+}
+
+$(document).on('click', 'a.page-link', function(e) {
+	e.preventDefault(); // Prevent default anchor tag behavior (i.e., navigating to a new page)
+	
+	var url = $(this).data('url'); // Get the URL from the data-url attribute of the clicked anchor tag
+	loadPage(url); // Call the loadPage function with the URL
+  });
+  
+
+  
+
+function loadPage(url) {
+	// Perform AJAX call to fetch data from the provided URL
+	callApi({
+	    url: url,
+	    method: 'GET',
+		success: function(response) {
+			if (response.status_code === 200) {
+				if (response.data.count === 0 ){
+					showEmptyDataMessage()
+				} else populateTable(response.data);
+			}
+		},
+		error: function(xhr, status, error) {
+			if (xhr.status === 401 || xhr.status === 403) {
+                        window.location.href = dashboardUrl
+                  } else {
+				showEmptyDataMessage()
+                        toastr.error("Something went wrong please try again");
+                  }
+		}
+	});
+}
+
+function populateTable(dataResp) {
+	var data = dataResp.results
+	var pageObj = dataResp.page_obj
+	var emptyDataDiv = document.getElementById('manage-staff-no-data');
+	if (emptyDataDiv) {
+	    emptyDataDiv.style.display = 'none';
+	}
+
+	var DataDiv = document.getElementById('manage-staff-data-div');
+	if (DataDiv) {
+	    DataDiv.style.display = 'block';
+	}
+
+	var tableBody = document.querySelector("#m_table_1 tbody");
+	tableBody.innerHTML = ""; // Clear existing table data
+  
+	data.forEach(function(object, index) {
+	    var row = "<tr>";
+  
+	    // Insert bulk action checkbox if needed
+	    {% if bulk_actions %}
+	    	row += "<td attr-id='" + object.pk + "'>";
+			row += "<div class='form-check form-check-flat form-check-primary'>";
+			row += "<label class='form-check-label m-checkbox m-checkbox--single m-checkbox--solid m-checkbox--brand'>";
+			row += "<input type='checkbox' name='bulk_id' id='option" + object.pk + "' value='" + object.pk + "' class='form-check-input bulk-checkbox m-checkable'><i class='input-helper'></i>";
+			row += "</label>";
+			row += "</div>";
+			row += "</td>";
+	    {% endif %}
+
+	    // Insert index column
+	    row += "<td>" + (index + 1) + "</td>";
+
+	    // Insert primary key column if needed
+	    {% if 'pk' in headers %}
+	    	row += "<td>" + object.pk + "</td>";
+	    {% endif %}
+
+	    // Insert name column
+	    row += "<td>" + object.title + "</td>";
+
+	    // Insert email column
+	    row += "<td>" + object.assignee_name + "</td>";
+
+	    row += "<td>" + object.status_display + "</td>";
+
+	    // Insert created date column
+	    row += "<td>" + formatTimestamp(object.createdAt); + "</td>";
+
+	    {% if edit_any_user  %}
+	    	var viewUrl = "{% url 'complaint_view' %}?compliant_id=" + object.pk + "&redirect=true&from=manage_compliant";
+	    	var editUrl = "{% url 'manage_complaint-edit' %}?complaint_id=" + object.pk + "&role=complaint&redirect=true&from=manage_compliant";
+		var workflowUrl = "{% url 'manage_complaint-workflow' %}?complaint_id=" + object.pk + "&role=workflow&redirect=true&from=manage_compliant";
+		var adminActions = `
+		<div class="btn-actions">
+			<a class="btn btn-sm btn-svg-icon btn-icon--lite btn-icon--active-brand" href="${viewUrl}" target="_blank">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="m-svg-icon"> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <rect x="0" y="0" width="24" height="24"></rect> <path d="M3,12 C3,12 5.45454545,6 12,6 C16.9090909,6 21,12 21,12 C21,12 16.9090909,18 12,18 C5.45454545,18 3,12 3,12 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"></path> <path d="M12,15 C10.3431458,15 9,13.6568542 9,12 C9,10.3431458 10.3431458,9 12,9 C13.6568542,9 15,10.3431458 15,12 C15,13.6568542 13.6568542,15 12,15 Z" fill="#000000" opacity="0.3"></path> </g></svg>
+			</a>
+			<a href="${editUrl}">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="m-svg-icon"> <g><path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="#000000"></path> <path d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z" fill="#000000"></path></g></svg>
+			</a>
+		</div>
+		`
+		var employeeActions = `
+		<div class="btn-actions">
+			<a class="btn btn-sm btn-svg-icon btn-icon--lite btn-icon--active-brand" href="${viewUrl}" target="_blank">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="m-svg-icon"> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <rect x="0" y="0" width="24" height="24"></rect> <path d="M3,12 C3,12 5.45454545,6 12,6 C16.9090909,6 21,12 21,12 C21,12 16.9090909,18 12,18 C5.45454545,18 3,12 3,12 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"></path> <path d="M12,15 C10.3431458,15 9,13.6568542 9,12 C9,10.3431458 10.3431458,9 12,9 C13.6568542,9 15,10.3431458 15,12 C15,13.6568542 13.6568542,15 12,15 Z" fill="#000000" opacity="0.3"></path> </g></svg>
+			</a>
+			<a href="${workflowUrl}">
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="m-svg-icon">
+					<path d="M16 3H21V8H19V5.41L13.41 11L19 16.59V14H21V19H16V17H18.59L13 11.41L7.41 17H10V19H5V14H7V16.59L12.59 11L7 5.41V8H5V3H10V5H7.41L13 10.59L18.59 5H16V3Z" fill="#000000"/>
+				</svg>
+			</a>
+		</div>
+		`
+		if (is_staff === true) row += "<td class='sticky-action'>" + adminActions + "</td>";
+		else if (is_staff === false) row += "<td class='sticky-action'>" + employeeActions + "</td>";
+		//row += "<td>" + actions + "</td>";
+	    {% endif %}
+
+	    row += "</tr>";
+	    tableBody.innerHTML += row;
+	});
+
+	var paginationHTML = generatePaginationHTML(dataResp);
+	var paginationBody = document.querySelector(".igl-pagination");
+	paginationBody.innerHTML = paginationHTML;
+}
+
+$('.bulk-action-button').click(function(e){
+	var action_name = $(this).attr('data-name');
+	var action_class = $(this).attr('class');
+	var action_confirm = $(this).attr('action-confirm');
+	var swal_title = $(this).attr('swal-title');
+	var swal_text = $(this).attr('swal-text');
+	var swal_confirm_button = $(this).attr('swal-confirm-button');
+  
+	var exist_class = "export_csv";
+	var contact_group = "contact_group";
+	var import_csv = "import_csv";
+	var action_value = action_name
+	if (action_name == "export_csv" || (typeof action_class !== 'undefined' && action_class.indexOf(exist_class) != -1)){
+	    
+	} else if(action_name == "import_csv" || (typeof action_class !== 'undefined' && action_class.indexOf(import_csv) != -1)) {
+  
+	} else if(action_name == "contact_group" || (typeof action_class !== 'undefined' && action_class.indexOf(contact_group) != -1)) {
+  
+	} else {
+	    e.preventDefault();
+	    swal({
+		  title: ((typeof swal_title !== 'undefined' && swal_title) ? swal_title : Trans.trans('Are you sure?')),
+		  text: ((typeof swal_text !== 'undefined' && swal_text) ? swal_text : Trans.trans("You will not be able to recover it !")),
+		  type: 'warning',
+		  showCancelButton: true,
+		  confirmButtonText: ((typeof swal_confirm_button !== 'undefined' && swal_confirm_button) ? swal_confirm_button : Trans.trans('Yes')),
+		  cancelButtonText: ((typeof swal_cancel_button !== 'undefined' && swal_cancel_button) ? swal_cancel_button : Trans.trans('Cancel')),
+	    }).then((result) => {
+		  if (result.value || result === true) {
+			if (typeof action_confirm !== 'undefined' && action_confirm == 'true') {
+				if(typeof result.value != 'undefined' && result.value == true) {
+				var purpose = $('<input type="hidden" name="'+action_name+'" value="'+action_name+'" />');
+				$('#action-purpose').html(purpose);
+				var form = $('.bulk-operation-form').eq(0)
+				if($(this).attr('action-url')){
+					$.removeCookie(get_cookie_cname(), { path: '/' });
+					form.attr('action',$(this).attr('action-url')).submit();
+					return true;
+				}
+				//form.submit();
+				}
+			} else {
+				var purpose = $('<input type="hidden" name="'+action_name+'" value="'+action_name+'" />');
+				$('#action-purpose').html(purpose);
+				var form = $('.bulk-operation-form').eq(0)
+				if($(this).attr('action-url')){
+					$.removeCookie(get_cookie_cname(), { path: '/' });
+					form.attr('action',$(this).attr('action-url')).submit();
+					return true;
+				}
+				var formData = new FormData(document.getElementById('bulk-operation-form'));
+				callApi({
+					url: serverUrl + deleteStaffUrl,
+					method: 'DELETE',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function(response) {
+					  if (response.status_code === 200) {
+					    toastr.success(Trans.trans("Staff deleted successfully!"));
+					    setTimeout(function() {
+							window.location.reload();
+						  }, 500);
+					  }
+					},
+					error: function(xhr, status, error) {
+					  if (xhr.status === 401 || xhr.status === 403) {
+					    window.location.href = dashboardUrl
+					  } else if (xhr.status === 400) {
+					    console.log(xhr, error)
+					    toastr.warning(Trans.trans("Please select atleast one item"));
+					  } else {
+					    toastr.error(Trans.trans("Something went wrong please try again"));
+					  }
+					}
+				    });
+			}
+		  }
+	    });
+	}
+	return true
+});
+
+$(document).ready(function() {
+    for (let key in filter) {
+        if (filter.hasOwnProperty(key)) {
+            let value = filter[key];
+            if (value.type === 'autocomplete') {
+                $(`#${key}`).autocomplete({
+                    source: function (request, response) {
+                        $.getJSON(`${value.url}?q=` + request.term, function (data) {
+                            response($.map(data['results'], function (value, key) {
+                                return {
+									label: value['selected_text'],
+									value: value['text'],
+									evalue:value['id']
+								};
+                            }));
+                        });
+                    },
+                    select: function (event, ui) {
+                        event.stopPropagation();
+                    }
+                });
+            } else if (value.type === 'date') {
+                $(`#${key}`).datepicker({
+                    format: 'dd/mm/yyyy',
+					autoclose: true,
+					todayHighlight: true,
+                });
+            }
+        }
+    }
+	$(document).on('click', '.ui-datepicker-prev, .ui-datepicker-next', function(event) {
+		document.getElementById('dropdown-menu').style.display = 'block';
+	});
+
+	if (document.getElementById('dropdownMenuButton1')) {
+		if (document.getElementById('dropdownMenuButton1').classList.contains('show')) {
+		} else {
+			document.getElementById('dropdown-menu').style.removeProperty('display')
+		}
+	}
+});
+
+</script>
+<script src="{% static 'frontend/js/datatables.js' %}" type="text/javascript"></script>
+<script src="{% static 'frontend/js/bulk-opration-table.js' %}" type="text/javascript"></script>
+<script src="{% static 'frontend/js/jquery-ui.js' %}" type="text/javascript"></script>
+
+{% endblock %}

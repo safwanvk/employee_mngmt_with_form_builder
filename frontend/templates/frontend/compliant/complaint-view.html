@@ -1,0 +1,185 @@
+{% extends "frontend/new_base.html" %}
+{% load i18n %}
+{% load templatehelpers %}
+{% load static %}
+
+
+{% block maintitle %} {{label}} {% endblock %}
+
+{% block content %}
+<div class="m-content" id="m-view-order">
+  <div class="loader" id="loader" style="display:none"></div>
+  <div class="d-flex justify-content-end">
+
+  </div>
+  <div class="m-portlet m-portlet--height-fluid ">
+    <div class="m-portlet__head" data-toggle="collapse" data-target="#general-info" aria-expanded="true" aria-controls="general-info">
+      <div class="m-portlet__head-caption">
+        <div class="m-portlet__head-title">
+          <span class="m-portlet__head-icon">
+            <i class="la la-info text-primary"></i>
+          </span>
+          <h3 class="m-portlet__head-text">{% trans 'General Information' %}</h3>
+        </div>
+      </div>
+      <div class="m-portlet__head-tools">
+        {% comment %} <a id="EditAppointmentOption" href="{% abs_url 'manage_appointment-edit' request %}?appointment_id={{appointment_id}}&role=appointment&redirect=true&from=manage_appointments" target="_blank" class="btn btn-inverse-warning px-4 py-2 btn-crd-hed bulk-action-button m-3"><i class="bi bi-pencil mr-1"></i>{% trans ' Edit' %}</a> {% endcomment %}
+        {% comment %} <a id="SendSmsOption" style="display: none" href="{% url 'order_form_url' %}?order_id={{orderid}}" target="_blank" class="btn btn-inverse-warning px-4 py-2 btn-crd-hed bulk-action-button m-3"><i class="bi bi-telephone mr-1"></i> Resend SMS</a> {% endcomment %}
+        <div class="collapse-icon"><i class="la la-angle-down"></i></div>
+      </div>
+    </div>
+    <div id="general-info" class="collapse show" data-parent="#m-view-order">
+      <div class="row m-portlet__body">
+        {% for field in general_fields %}
+          {% if not forloop.counter == 1 %}
+          <div class="col-md-6">
+          {% else %}
+            <div class="col-md-6">
+          {% endif %}
+            <div class="bonus-det p-3" id={{field.key}}>
+              <div class="label-div-{{field.key}}">
+                <h6 class="h6-div-{{field.key}}">{% trans field.text %}</h6>
+              </div>
+              <div class="value-div-{{field.key}}">
+                -
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block stylesheet %}
+<style type ="text/css">
+  .loader{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    opacity: 70%;
+    z-index: 9999;
+    background: url("{% static 'afl_user/img/loader.gif' %}") 50% 50% no-repeat rgb(249,249,249);
+  }
+</style>
+{% endblock stylesheet %}
+
+{% block javascript %}
+<script type="text/javascript">
+var previous = "{{ previous }}";
+var compliant_id = {{ compliant_id }};
+var general_fields = {{ general_fields|safe }};
+window.onload = function() {
+  isUserEditPermission = false;
+  showLoader();
+  // callApi({
+	// 	url: serverUrl + checkPermissionUrl,
+	// 	method: 'POST',
+	// 	contentType: 'application/json',
+	// 	data: JSON.stringify({'codenames': ['apis.add_afluser']}),
+	// 	success: function(response) {
+	// 		if (response.status_code === 200) {
+	// 			var respData = response.data;
+	// 			for (var key in respData) {
+	// 				if (respData.hasOwnProperty(key)) {
+	// 					isUserEditPermission = respData[key]
+	// 				}
+	// 			}
+  //       if (isUserEditPermission) {
+  //         if (document.getElementById('EditOrderOption')) {
+  //           if (previous === 'incomplete_orders' || previous === 'complete_orders') {
+  //             document.getElementById('EditOrderOption').style.display = 'block';
+  //           }
+  //         }
+  //       } else {
+  //         if (previous === 'incomplete_orders') {
+  //           document.getElementById('EditOrderOption').style.display = 'block';
+  //         }
+  //       }
+  //       callApi({
+  //         url: serverUrl + getContactFormUrl,
+  //         method: 'GET',
+  //         params: {order_id: orderid},
+  //         success: function(response) {
+  //           if (response.status_code === 200) {
+  //             var orderData = response.data;
+  //             setDetails(orderData);
+  //             hideLoader();
+  //           }
+  //         },
+  //         error: function(xhr, status, error) {
+  //           hideLoader();
+  //           if (xhr.status === 401 || xhr.status === 403) {
+  //             window.location.href = dashboardUrl
+  //           } else {
+  //             toastr.error(Trans.trans("Something went wrong please try again"));
+  //           }
+  //         }
+  //       });
+  //     }
+  //   }
+  // });
+  getComplaintUrl = getComplaintUrl.replace('<complaint_id>', compliant_id);
+  callApi({
+    url: serverUrl + getComplaintUrl,
+    method: 'GET',
+    success: function(response) {
+        var complaintData = response;
+        setDetails(complaintData);
+        hideLoader();
+    },
+    error: function(xhr, status, error) {
+      hideLoader();
+      if (xhr.status === 401 || xhr.status === 403) {
+        window.location.href = dashboardUrl
+      } else {
+        toastr.error("Something went wrong please try again");
+      }
+    }
+  });
+};
+
+function setDetails(orderData) {
+  if (orderData.hasOwnProperty('pk')) {
+    for (var i = 0; i < general_fields.length; i++) {
+      field = general_fields[i];
+      if (field.key) {
+        var keys = field.key.split('-');
+        var nestedValue = orderData;
+        for (var j = 0; j < keys.length; j++) {
+          nestedValue = nestedValue[keys[j]];
+          if (nestedValue === undefined) {
+            break;
+          }
+        }
+        var element = document.querySelector(`.value-div-${field.key}`);
+        if (element) {
+            element.innerHTML = nestedValue ? nestedValue : '-';
+        }
+      }
+    }
+  }
+}
+
+var loaderContainer = document.getElementById("loader");
+// Show loader
+function showLoader() {
+	if (loaderContainer) {
+		loaderContainer.style.display = "block";
+	}
+}
+
+// Hide loader
+function hideLoader() {
+	if (loaderContainer) {
+		loaderContainer.style.display = "none";
+	}
+}
+
+</script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% load static %}
+{% load i18n %}
+{% load templatehelpers %}
+
+<div id="action-sidebar" class="action-sidebar m-quick-sidebar m-quick-sidebar__no-padding" style="display:none;">
+	<div class="m-portlet m-portlet--mobile m-portlet--sidebar m-portlet--unair">
+		<!-- head region -->
+		<div class="m-portlet__head">
+			<div class="m-portlet__head-caption">
+				<div class="m-portlet__head-title">
+					<h4 class="m-portlet__head-text text-dark" data-type="sidebar-title">{% block maintitle %}
+						{{label}}
+					{% endblock %}</h4>
+				</div>
+			</div>
+			<div class="m-portlet__head-tools">
+				<span id="close-action-bar" class="m--align-right action-bar-close m-quick-sidebar__close-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+					<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+				    </svg></span>
+			</div>
+		</div>
+		<!-- head region -->
+		<!-- content region -->
+		<div class="action-bar-content">
+			{% spinner class='text-center custom-loader' style='margin-top:60%' %}
+		</div>
+		<!-- content region -->
+	</div>
+</div>

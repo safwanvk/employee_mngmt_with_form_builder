@@ -1,0 +1,306 @@
+{% load static %}
+{% load i18n %}
+{% load templatehelpers %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'en-us' }}">
+    {% block body %}
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <title>{{SITE_NAME}} | {{label | default:'Dashboard'}}{% block title %}{% endblock %}</title>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="{% static 'frontend/assets/css/tableScroll.css' %}">
+            <link rel="stylesheet" href="{% static 'frontend/assets/css/style.css' %}">
+            <link rel="shortcut icon" href="{% static 'frontend/assets/img/Logo-mini.png' %}" />
+            <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet"> 
+            <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&display=swap" rel="stylesheet" type="text/css" />
+            <link href="{% static 'frontend/css/vendors.bundle.css' %}" rel="stylesheet" type="text/css" />
+            <link href="{% static 'frontend/css/jquery-ui.css' %}" rel="stylesheet" type="text/css" />
+            <link href="{% static 'frontend/css/circular-progress.css' %}" rel="stylesheet" type="text/css" />
+            <link href="{% static 'frontend/css/toastr.css' %}" rel="stylesheet" type="text/css" />
+            <link href="{% static 'frontend/css/custom-style.css' %}" rel="stylesheet" type="text/css" />
+            <link href="{% static 'frontend/assets/css/language-switch.css' %}" rel="stylesheet" type="text/css" />
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+            <link href="{% static 'afl_user/css/calendar.css' %}" rel="stylesheet" type="text/css" />
+            {% block stylesheet %}
+            {% endblock %}
+            {% block headerscript %}
+                <script src="{% static 'language/js/translate.js' %}"></script>
+            {% endblock %}
+        </head>
+        <body>
+            <div class="container-scroller">
+            <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+                <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                <a class="navbar-brand brand-logo" href="../../index.html"><img src="{% static 'backoffice/assets/img/Logo.png' %}" alt="logo" /></a>
+                <a class="navbar-brand brand-logo-mini" href="../../index.html"><img src="{% static 'backoffice/assets/img/Logo-mini.png' %}" alt="logo" /></a>
+                </div>
+                <div class="navbar-menu-wrapper d-flex align-items-stretch">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <!-- <span class="mdi mdi-menu"></span> -->
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="user-details">
+                    <p class="txt-primary mb-0">{% trans 'Hi' %} <span id="username">Mejo</span>,</p>
+                    <p class="txt-secondary mb-0">{% trans 'Welcome to EMS!' %}</p>
+                </div>
+                <!-- <div class="user-details">
+                    <p class="txt-primary mb-0">Hi Mejo,</p>
+                    <p class="txt-secondary mb-0">Welcome to Italia!</p>
+                </div> -->
+                <!-- <div class="search-field d-none d-md-block">
+                    <form class="d-flex align-items-center h-100" action="#">
+                    <div class="input-group">
+                        <div class="input-group-prepend bg-transparent">
+                        <i class="input-group-text border-0 mdi mdi-magnify"></i>
+                        </div>
+                        <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects">
+                    </div>
+                    </form>
+                </div> -->
+                <ul class="navbar-nav navbar-nav-right">
+                
+                    <li class="nav-item d-none d-lg-block full-screen-link">
+                    <a class="nav-link">
+                        <i class="bi bi-fullscreen" id="fullscreen-button"></i>
+                    </a>
+                    </li>
+                    <li class="nav-item nav-profile dropdown">
+                    <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% comment %} <div class="nav-profile-img"> {% endcomment %}
+                        {% comment %} <img src="{% static 'backoffice/assets/img/profile-image.png' %}" alt="image"> {% endcomment %}
+                        {% comment %} <span class="availability-status online"></span> {% endcomment %}
+                        {% comment %} </div> {% endcomment %}
+                        <div class="nav-profile-text">
+                        <p class="mb-0 text-black" id="fullName">David Greymaax</p>
+                        <small id="group_name">Admin</small>
+                        </div>
+                        <i class="bi bi-chevron-down drp-arrw"></i>
+                    </a>
+                    <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
+                        {% comment %} <a class="dropdown-item" href="#">
+                        <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a> {% endcomment %}
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" id="logoutBtn">
+                        <i class="mdi mdi-logout me-2 text-primary"></i> Logout </a>
+                    </div>
+                    </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                    <i class="bi bi-list"></i>
+                </button>
+                </div>
+            </nav>
+            <!-- partial -->
+            <div class="container-fluid page-body-wrapper">
+                <!-- partial:../../partials/_sidebar.html -->
+                <nav class="sidebar sidebar-offcanvas d-flex flex-column justify-content-between" id="sidebar">
+                <div class="positioning-sidebar">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="bi bi-columns-gap menu-icon"></i>
+                            <span class="menu-title">{% trans 'Dashboard' %}</span>
+                        </a>
+                    </li>
+                    {% comment %} <li class="nav-item">
+                        <a class="nav-link" href="{% url 'incomplete_orders' request %}">
+                            <i class="bi bi-exclamation-triangle menu-icon"></i>
+                            <span class="menu-title">{% trans 'Incomplete Orders' %}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'review_orders' request %}">
+                            <i class="bi bi-pencil menu-icon"></i>
+                            <span class="menu-title">{% trans 'Review Orders' %}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'complete_orders' request %}">
+                            <i class="bi bi-check-circle menu-icon"></i>
+                            <span class="menu-title">{% trans 'Completed Orders' %}</span>
+                        </a>
+                    </li>
+                    {% comment %} <li class="nav-item">
+                    <a class="nav-link" href="Plank-customers.html">
+                        <i class="bi bi-people menu-icon"></i>
+                        <span class="menu-title">Plank Customers</span>
+                        
+                    </a>
+                    </li> {% endcomment %}
+                    {% comment %} <li class="nav-item">
+                        <a class="nav-link" href="{% url 'referral_links' request %}">
+                            <i class="bi bi-link menu-icon"></i>
+                            <span class="menu-title">{% trans 'Referral Links' %}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_offers' request %}">
+                            <i class="bi bi-tag menu-icon"></i>
+                            <span class="menu-title">{% trans 'Offer Management' %}</span>
+                        </a>
+                    </li> {% endcomment %} 
+                    {% comment %} <li class="nav-item" id="apis.add_afluser">
+                        <a class="nav-link" href="{% url 'manage_staff' %}">
+                            <i class="bi bi-person-gear menu-icon"></i>
+                            <span class="menu-title">{% trans 'Employee Management' %}</span>
+                        </a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_complaint' %}">
+                            <i class="bi bi-bug menu-icon"></i>
+                            <span class="menu-title">{% trans 'Complaint Management' %}</span>
+                        </a>
+                    </li>  {% endcomment %}
+                    
+                    {% comment %} <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-person menu-icon"></i>
+                        <span class="menu-title">My Profile</span>
+                    </a>
+                    </li> {% endcomment %}
+                </ul>
+                <ul class="nav mb-2">
+                    <li class="nav-item">
+                    <a class="nav-link" href="#" id="logoutBtnFrmSidebar">
+                        <i class="bi bi-power menu-icon"></i>
+                        <span class="menu-title">Logout</span>
+                    </a>
+                    </li>
+                </ul>
+                </div>
+                </nav>
+                <!-- partial -->
+                <div class="main-panel">
+                <div class="content-wrapper">
+                    {% block breadcrumb_navigation %}
+                        {% if breadcrumbs %}
+                            {% breadcrumb breadcrumbs request label mainlabel %}
+                        {% endif %}
+                    {% endblock %}
+
+                    {% block content %}{% endblock %}
+                    
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:../../partials/_footer.html -->
+                <footer class="footer">
+                    <div class="container-fluid d-flex justify-content-between">
+                    <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © EMS <script>document.write(new Date().getFullYear())</script></span>
+                    <!-- <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Free <a href="#" target="_blank">Bootstrap admin template</a> from Bootstrapdash.com</span> -->
+                    </div>
+                </footer>
+                <!-- partial -->
+                </div>
+
+                {% include 'frontend/_quick_sidebar_new.html' %}
+                <!-- main-panel ends -->
+            </div>
+            <!-- page-body-wrapper ends -->
+            </div>
+            <script src="{% static 'frontend/js/vendors.bundle.js' %}" type="text/javascript"></script>
+            <script src="{% static 'frontend//js/scripts.bundle.js' %}" type="text/javascript"></script>
+            <script src="{% static 'frontend/js/arrive.min.js' %}" type="text/javascript"></script>
+            <script src="{% static 'frontend/js/jquery.formset.min.js' %}" type="text/javascript"></script>
+            <script src="{% static 'frontend/js/jquery.tmpl.min.js' %}"></script>
+            {% comment %} <script src="{% static 'js/spinner.tmpl.js' %}"></script> {% endcomment %}
+            <script type="text/javascript" src="{% static 'frontend/js/socket.io.js' %}" ></script>
+            <script src="{% static 'frontend/js/custom.js' %}" type="text/javascript"></script>
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+            
+
+                    <script type="text/javascript">
+                    var socket_url = "{{SOCKET_URL}}";
+                    var SITE_PREFIX = "{{SITE_PREFIX}}"
+                    var MEDIA_URL = "{{MEDIA_URL}}"
+                    var STATIC_URL = "{{STATIC_URL}}"
+                    var RESIZER_URL ='/afl-resizer'
+                    var WALLET = "wallet1"
+                    var serverUrl = '{{ SERVER_URL }}';
+                    var dashboardUrl = '{{ dashboard_url }}';
+                    var loginWebUrl = "{{ login_url }}"
+                    var siteUrlHttps = "{{ REFERRAL_URL_HTTPS }}";
+                    var referralLinksUrl = '{{ referral_links_url }}';
+                    </script>
+
+                <script type="text/javascript" src="{% static 'frontend/js/script.js' %}" ></script>
+                <script type="text/javascript" src="{% static 'frontend/js/jquery-ui.js' %}" ></script>
+                <script type="text/javascript" src="{% static 'frontend/api_js/auth.js' %}" ></script>
+                <script type="text/javascript" src="{% static 'frontend/api_js/urls.js' %}" ></script>
+                <script type="text/javascript" src="{% static 'frontend/api_js/api.js' %}" ></script>
+                <script type="text/javascript" src="{% static 'frontend/api_js/common.js' %}" ></script>
+                <script type="text/javascript" src="{% static 'frontend/api_js/login.js' %}" ></script>
+                <script src="{% static 'frontend/assets/js/vendor.bundle.base.js' %}"></script>
+                <script src="{% static 'frontend/js/jquery.validate.min.js' %}" type="text/javascript"></script>
+                <script src="{% static 'frontend/assets/js/off-canvas.js' %}"></script>
+                <script src="{% static 'frontend/assets/js/hoverable-collapse.js' %}"></script>
+                <script src="{% static 'frontend/assets/js/misc.js' %}"></script>
+                <script type="text/javascript" src="{% static 'frontend/js/js.cookie.js' %}" ></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+                <script>
+                //jQuery("#sidebar ul").on('click','li',function(){
+                    //jQuery(this).addClass("active").siblings().removeClass("active");
+                //});
+                function _get_cookie_cname(){
+                    var url = window.location.pathname;
+                    s = url.split('/')
+                    l = s.pop()
+                    if (l.length > 0 ){
+                        return l
+                    }
+                    return s.pop()
+                }
+                var ck_value = getCookie("bulk_sl")
+                if (ck_value && ck_value != _get_cookie_cname()+"#checked"){
+                    $.removeCookie("bulk_sl", { path: '/' });
+                }
+                </script>
+                <script src="{% static 'frontend/assets/js/tabelScroll.js' %}"></script>
+                
+                    <script>
+                        jQuery.extend(jQuery.validator.messages, {
+                        required: "{% trans 'This field is required.' %}",
+                        });
+                    </script>
+                    <script>
+                        var toggle = document.getElementById('language-toggle');
+                        var langSpansOff = document.querySelectorAll('.language-toggle.off');
+
+                        toggle.addEventListener('change', function() {
+                            if (toggle.checked) {
+                                langSpansOff.forEach(function(span) {
+                                    var url = span.getAttribute('data-url');
+                                    window.location.href = url;
+                                });
+                            }
+                        });
+                    </script>
+
+                <!-- Socket.IO Client -->
+            
+            <!-- Messages comes here -->
+                {% block messages %}
+                    {% if messages %}
+                    {% include "message.html" with messages=messages %}
+                    {% endif %}
+                {% endblock %}
+                
+                
+                    {% block minfiy_javascript %}{% endblock %}
+                    {% block filter_js %}{% endblock %}
+        
+                    
+                {% if filter_data %}
+                    {% include 'filter/filterjs.inc' with page_filter=filter_data %}
+                {% endif %}
+
+                {% block javascript %}
+                {% endblock %}
+        </body>
+    {% endblock body %}
+</html>
