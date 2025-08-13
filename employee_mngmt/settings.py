@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'template_helpers',
     'dal',
-    'dal_select2'
+    'dal_select2',
+    'core'
 ]
 
 MIDDLEWARE = [

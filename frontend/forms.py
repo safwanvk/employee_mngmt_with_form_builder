@@ -87,3 +87,35 @@ class ChangePasswordForm(forms.Form):
 		self.fields['old_password'].label = _("Old password")
 		self.fields['new_password'].label = _("New password")
 		self.fields['confirmpswd'].label = _("Confirm new password")
+
+class AddNewForm(forms.Form):
+	name = forms.CharField(label=_("Name"), required=True)
+
+	def __init__(self, *args, **kwargs):
+		self.request = None
+		if 'request' in kwargs:
+			self.request = kwargs.pop('request', None)
+		super(AddNewForm, self).__init__(*args, **kwargs)
+		instance = kwargs.get('instance',{})
+
+class EditNewForm(forms.Form):
+	label = forms.CharField(label=_("Label"), required=True)
+	FIELD_TYPE_CHOICES =[
+		('text','Text'),
+		('number','Number'),
+		('date','Date'),
+		('password','Password'),
+		('textarea','Textarea'),
+		('select','Select'),
+		('checkbox','Checkbox')
+	]
+	field_type = forms.ChoiceField(choices=FIELD_TYPE_CHOICES, label=_('Field type'), widget=forms.Select(), required=True)
+	required = forms.BooleanField(label=_('Required'), required=False, initial=False)
+
+
+	def __init__(self, *args, **kwargs):
+		self.request = None
+		if 'request' in kwargs:
+			self.request = kwargs.pop('request', None)
+		super(EditNewForm, self).__init__(*args, **kwargs)
+		instance = kwargs.get('instance',{})

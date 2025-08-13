@@ -108,13 +108,13 @@
                             <span class="menu-title">{% trans 'Dashboard' %}</span>
                         </a>
                     </li>
-                    {% comment %} <li class="nav-item">
-                        <a class="nav-link" href="{% url 'incomplete_orders' request %}">
-                            <i class="bi bi-exclamation-triangle menu-icon"></i>
-                            <span class="menu-title">{% trans 'Incomplete Orders' %}</span>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_form' %}">
+                            <i class="bi-ui-checks menu-icon"></i>
+                            <span class="menu-title">{% trans 'Manage Forms' %}</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    {% comment %}<li class="nav-item">
                         <a class="nav-link" href="{% url 'review_orders' request %}">
                             <i class="bi bi-pencil menu-icon"></i>
                             <span class="menu-title">{% trans 'Review Orders' %}</span>
@@ -276,8 +276,8 @@
                     <script>
                         var toggle = document.getElementById('language-toggle');
                         var langSpansOff = document.querySelectorAll('.language-toggle.off');
-
-                        toggle.addEventListener('change', function() {
+                        if (toggle) {
+                            toggle.addEventListener('change', function() {
                             if (toggle.checked) {
                                 langSpansOff.forEach(function(span) {
                                     var url = span.getAttribute('data-url');
@@ -285,6 +285,7 @@
                                 });
                             }
                         });
+                        }
                     </script>
 
                 <!-- Socket.IO Client -->
