@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import (
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import UserProfileSerializer, RegisterSerializer
+from .serializers import UserProfileSerializer, RegisterSerializer, ChangePasswordSerializer
 from django.http import JsonResponse
 from rest_framework import status
 from django.contrib.auth import login, logout
@@ -18,6 +18,7 @@ from employee_mngmt.utils import apiSuccess
 from django.utils.translation import ngettext  as _
 from rest_framework.exceptions import APIException
 import employee_mngmt.exceptions as ApiExceptions
+
 
 # Create your views here.
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -102,3 +103,17 @@ def registration(request):
                   return Response({'detail':'Registration success.'}, status.HTTP_201_CREATED)
             except Exception as e:
                   print(e)
+
+class ChangePasswordView(APIView):
+      permission_classes = [IsAuthenticated]
+      authentication_classes = [JWTAuthentication]
+      def post(self, request):
+            serializer = ChangePasswordSerializer(data=request.data)
+            if not serializer.is_valid():
+                  return Response(serializer.errors, status=400)
+            user = request.user
+            if not user.check_password(serializer.validated_data['old_password']):
+                  return Response({'old_password': ['Wrong password.']}, status=400)
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            return Response({'detail':'Password updated successfully.'})

@@ -58,3 +58,32 @@ class SignUpForm(UserCreationForm):
 			})
 		self.fields['password'].label = _("Password")
 		self.fields['confirmpswd'].label = _("Password confirmation")
+
+
+class ChangePasswordForm(forms.Form):
+	old_password = forms.CharField(label=_('Old password'), widget=forms.TextInput(attrs={'class':'form-control','placeholder':_('Old password')}))
+	new_password = forms.CharField(label=_('New password'), widget=forms.TextInput(attrs={'class':'form-control','placeholder':_('New password')}))
+	confirmpswd = forms.CharField(label=_('Confirm new password'), widget=forms.TextInput(attrs={'class':'form-control','placeholder':_('Confirm new password')}))
+
+	def __init__(self, *args, **kwargs):
+		super(ChangePasswordForm, self).__init__(*args, **kwargs)
+
+
+		if 'old_password' in self.fields:
+			self.fields['old_password'].widget.attrs.update({
+				'autocomplete': 'off',
+				'disabled':True          #for preventing autocomplete some browser where above line not working such as Chrome
+			})
+		if 'new_password' in self.fields:
+			self.fields['new_password'].widget.attrs.update({
+				'autocomplete': 'off',
+				'disabled':True          #for preventing autocomplete some browser where above line not working such as Chrome
+			})
+		if 'confirmpswd' in self.fields:
+			self.fields['confirmpswd'].widget.attrs.update({
+				'autocomplete': 'off',
+				'disabled':True			#for preventing autocomplete some browser where above line not working such as Chrome
+			})
+		self.fields['old_password'].label = _("Old password")
+		self.fields['new_password'].label = _("New password")
+		self.fields['confirmpswd'].label = _("Confirm new password")

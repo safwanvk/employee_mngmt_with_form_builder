@@ -3,8 +3,9 @@ from django.shortcuts import redirect
 from .decorators import render_method
 from django.views import View
 from django.utils.translation import gettext_lazy as _
-from .forms import (UserLoginForm, SignUpForm)
+from .forms import (UserLoginForm, SignUpForm, ChangePasswordForm)
 from django.conf import settings
+from .utilities import afl_reverse
 
 # Create your views here.
 
@@ -55,12 +56,6 @@ class ProfileView(View):
       def prepare_breadcrumbs(self,request,context):
 
             context['label'] = _('Profile Info')
-            context['breadcrumbs'].update({
-                  1:{
-                        'label':_('Profile'),
-                        'url'  : 'profile_view'
-                  }
-            })
             return context
 
       def get(self, request, *args, **kwargs):
@@ -111,3 +106,58 @@ class Signup(View):
 		render_context['return_type'] = 'template_response'
 		render_context['template'] = self.template
 		return render_context
+
+@method_decorator(render_method(), name='dispatch')
+class ChangePassword(View):
+	template = 'frontend/user/change-password.html'
+	def get(self, request, *args, **kwargs):
+		context = {}
+		initial = {}
+		initial['request'] = request
+		form = ChangePasswordForm(initial=initial)
+		form.id = "register-form"
+		context['form'] = form
+		context['theme_group'] = 'backoffice'
+		render_context = {}
+		render_context['context'] = context
+		render_context['return_type'] = 'template_response'
+		render_context['template'] = self.template
+		return render_context
+
+@method_decorator(render_method(), name='dispatch')
+class ChangePassword(View):
+      template = 'frontend/user/change-password.html'
+
+      def prepare_breadcrumbs(self,request,context):
+            context['label'] = _('Change Password')
+            return context
+
+      def get(self, request, *args, **kwargs):
+            context = {}
+            initial = {}
+            initial['request'] = request
+            form = ChangePasswordForm(initial=initial)
+            context = {}
+
+            button =[
+                  {'type':"submit",'label':_("Save changes"),'name':"personal_details",'class':"btn btn-brand",},
+                  {'type':"reset",'label':_("Cancel"),'class':"btn btn-secondary",},
+            ]
+            form.buttons = button
+            context['form'] = form
+
+            context['theme_group'] = 'backoffice'
+            context['profile_view'] = afl_reverse('profile_view', request)
+            context['breadcrumbs'] = {
+                        0: {
+                                    'icon': "bi bi-house",
+                                    'url' : 'dashboard'
+                              },
+
+                        }
+            context = self.prepare_breadcrumbs(request,context)
+            render_context = {}
+            render_context['context'] = context
+            render_context['return_type'] = 'template_response'
+            render_context['template'] = self.template
+            return render_context
