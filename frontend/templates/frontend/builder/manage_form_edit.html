@@ -435,63 +435,6 @@ $(document).ready(function(){
       }
     });
 
-    // var namesArray = ['assignee', 'title', 'description']
-
-    // $("form#token-form").focusout( function(){
-    //   changeChecking()
-    // })
-
-    // $(document).on('click','#form-reset', function(){
-    //   event.preventDefault();
-    //   $('form#token-form input, form#token-form select, form#token-form textarea').each(function() {
-    //     if ($(this).attr('name') === 'assignee') {
-    //       var select2Dropdown = $(`#${$(this).attr('id')}`);
-    //       var valueToCheck = initialValues[$(this).attr('name')];
-    //       var valueToCheckLabel = initialValues[$(this).attr('name')+ '_label'];
-    //       if (select2Dropdown.find(`option[value="${valueToCheck}"]`).length === 0) {
-    //         var newOption = new Option(valueToCheckLabel, valueToCheck, true, true);
-    //         select2Dropdown.append(newOption)
-    //       }
-    //       select2Dropdown.val(valueToCheck).trigger('change');
-    //     } else {
-    //       var fieldName = $(this).attr('name');
-    //       $(this).val(initialValues[fieldName]);
-    //     }
-    //   });
-    //   $("#token-send").attr("disabled", true)
-    //   $("button[name='personal_details']").attr("disabled", true)
-    //   $('#token-form').find('.invalid-feedback').remove()
-    //   changeChecking()
-    // })
-
-    // function changeChecking(){
-    //   var current_values = {}
-
-    //   $('form#token-form input, form#token-form select, form#token-form textarea').each(function() {
-    //     var elementName = $(this).attr('name');
-    //     if (namesArray.includes(elementName)){
-    //       current_values[elementName] = $(this).val();
-    //     }
-    //   });
-
-    //   var isSame = true;
-    //   console.log(initialValues, current_values)
-    //   namesArray.forEach( value => {
-    //     if (initialValues[value] != current_values[value]) {
-    //       isSame = false;
-    //       return false;
-    //     }
-    //   });
-    //   console.log("is same", isSame);
-    //   if (isSame){
-    //     $("#token-send").attr("disabled", true)
-    //     $("button[name='personal_details']").attr("disabled", true)
-    //   }else{
-    //     $("#token-send").attr("disabled", false)
-    //     $("button[name='personal_details']").attr("disabled", false)
-    //   }
-    // }
-
   })
 </script>
 {% endblock %}

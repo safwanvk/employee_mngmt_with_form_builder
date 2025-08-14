@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Form, Field
+from .models import Form, Field, Employee
 
 class FieldSerializer(serializers.ModelSerializer):
       class Meta:
@@ -19,3 +19,10 @@ class FormSerializer(serializers.ModelSerializer):
       def create(self, validated_data):
             validated_data['created_by'] = self.context['request'].user
             return super().create(validated_data)
+
+class EmployeeSerializer(serializers.ModelSerializer):
+      form_name = serializers.CharField(source='form.name', read_only=True)
+      class Meta:
+            model = Employee
+            fields = ['id','form','form_name','data','created_by','created_at','updated_at']
+            read_only_fields = ['created_by','created_at','updated_at']

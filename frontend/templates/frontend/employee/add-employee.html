@@ -35,7 +35,7 @@
                 <i class="flaticon-user m--font-primary"></i>
               </span>
                             <h3 class="m-portlet__head-text">
-                              {% trans 'Add New Compilent' %}
+                              {% trans 'Add New Employee' %}
                             </h3>
                         </div>
                     </div>
@@ -157,6 +157,7 @@
                    {% endfor %}
                   </div>
                  </div>
+                 <div id="dynForm" style="margin-left:35px; margin-bottom:20px"></div>
                  <!-- ------------- -->
                  <div class="m-portlet__foot m-portlet__foot--fit">
                   <div class="m-form__actions">
@@ -202,10 +203,7 @@
   {% endif %}
 
   <script>
-  var manage_complaint_url = "{{ manage_complaint }}"
-
-  var d = new Date();
-  var maxDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var manage_employee_url = "{{ manage_employee }}"
 
 $(document).ready(function(){
 
@@ -219,24 +217,11 @@ $(document).ready(function(){
     );
     var errorClass = 'invalid-feedback';
     var rules = {
-      assignee: {
-        required: true
-      },
-      title: {
+      form: {
         required: true,
-        minlength: 4,
-        maxlength :120,
-      },
-      description: {
-        required: true,
-        minlength: 4,
-        maxlength :250,
-      },
+      }
     }
     var messages = {
-      assignee: {
-        required: "Please select an assignee."
-      }
     }
     $('#token-form').validate({
       rules:rules,
@@ -284,20 +269,32 @@ $(document).ready(function(){
       }
     }
 
+    function collectFormData(){
+      const form = document.getElementById('dynForm');
+      const inputs = form.querySelectorAll('input, textarea, select');
+      const data = {};
+      inputs.forEach(el => {
+        if(el.type==='checkbox') data[el.name] = el.checked;
+        else data[el.name] = el.value;
+      });
+      return data;
+    }
+
     function token_send(obj){
       showLoader()
-      var formData = new FormData(document.getElementById('token-form'));
+      const formId = document.getElementById('id_form').value;
+      const payload = { form: parseInt(formId), data: collectFormData() };
       callApi({
-        url: serverUrl + addCompliantUrl,
+        url: serverUrl + addEmployeeUrl,
         method: 'POST',
-        data: formData,
+        data: JSON.stringify(payload),
         processData: false,
-        contentType: false,
+        contentType: 'application/json',
         success: function(response) {
           hideLoader();
-          toastr.success("Appointment created successfully!");
+          toastr.success("Employee created successfully!");
           setTimeout(function() {
-            window.location.href = manage_complaint_url;
+            window.location.href = manage_employee_url;
           }, 500);
         },
         error: function(xhr, status, error) {
@@ -314,11 +311,11 @@ $(document).ready(function(){
       });
     }
 
-    let $assigneeSelect = $('#id_assignee');
+    let $formSelect = $('#id_form');
 
     // Initialize Select2
-    $assigneeSelect.select2({
-      placeholder: $assigneeSelect.attr('data-placeholder'),
+    $formSelect.select2({
+      placeholder: $formSelect.attr('data-placeholder'),
       minimumInputLength: 1,
       language: {
         inputTooShort: function(args) {
@@ -326,7 +323,7 @@ $(document).ready(function(){
         }
       },
       ajax: {
-        url: $assigneeSelect.attr('data-url'),
+        url: $formSelect.attr('data-url'),
         dataType: 'json',
         delay: 250,
         processResults: function (data) {
@@ -339,6 +336,49 @@ $(document).ready(function(){
       }
     });
 
+    $formSelect.on('select2:select', function (e) {
+      let selectedData = e.params.data;
+      getFormFieldsUrl = getFormFieldsUrl.replace('<form_id>', selectedData.id);
+      callApi({
+        url: serverUrl + getFormFieldsUrl,
+        method: 'GET',
+        success: function(response) {
+          var fieldData = response;
+          if (fieldData && fieldData.length > 0) {
+            createDynamicForm(fieldData);
+          } else {
+            toastr.error("No fields found for the selected form.");
+          }
+        },
+        error: function(xhr, status, error) {
+          if (xhr.status === 401 || xhr.status === 403) {
+                window.location.href = dashboardUrl
+          } else {
+                toastr.error("Something went wrong please try again");
+          }
+        }
+      });
+    });
+
+    function createDynamicForm(fields){
+      const formDiv = document.getElementById('dynForm');
+      formDiv.innerHTML='';
+      fields.forEach(f => {
+        const wrap = document.createElement('div');
+        const label = document.createElement('label'); label.textContent = `${f.label}${f.required?' *:':':'}`;
+        let input;
+        if (f.field_type === 'textarea'){ input = document.createElement('textarea'); }
+        else if (f.field_type === 'checkbox'){ input = document.createElement('input'); input.type = 'checkbox'; }
+        //else if (f.field_type === 'select'){ input = document.createElement('select'); (f.options||[]).forEach(opt=>{ const o=document.createElement('option'); o.value=opt; o.textContent=opt; input.appendChild(o); }); }
+        else { input = document.createElement('input'); input.type = (f.field_type==='password'?'password': f.field_type); }
+        input.name = f.label; input.required = !!f.required; input.dataset.fieldId = f.id;
+        wrap.appendChild(label);
+        // include space between label and input
+        wrap.appendChild(document.createElement('br'));
+        wrap.appendChild(input);
+        formDiv.appendChild(wrap);
+      });
+    }
   })
 </script>
 {% endblock %}

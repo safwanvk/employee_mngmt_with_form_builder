@@ -106,7 +106,7 @@ class EditNewForm(forms.Form):
 		('date','Date'),
 		('password','Password'),
 		('textarea','Textarea'),
-		('select','Select'),
+		# ('select','Select'),
 		('checkbox','Checkbox')
 	]
 	field_type = forms.ChoiceField(choices=FIELD_TYPE_CHOICES, label=_('Field type'), widget=forms.Select(), required=True)
@@ -118,4 +118,24 @@ class EditNewForm(forms.Form):
 		if 'request' in kwargs:
 			self.request = kwargs.pop('request', None)
 		super(EditNewForm, self).__init__(*args, **kwargs)
+		instance = kwargs.get('instance',{})
+
+class AddEmployeeForm(forms.Form):
+	form = forms.ChoiceField(
+        choices=[
+            ('', _('Please select'))
+        ],
+        label=_("Form"),
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'data-placeholder': _('Choose form'),
+            'data-url': f'{settings.SERVER_URL}/api/v1/form-autocomplete/'
+        })
+    	)
+
+	def __init__(self, *args, **kwargs):
+		self.request = None
+		if 'request' in kwargs:
+			self.request = kwargs.pop('request', None)
+		super(AddEmployeeForm, self).__init__(*args, **kwargs)
 		instance = kwargs.get('instance',{})

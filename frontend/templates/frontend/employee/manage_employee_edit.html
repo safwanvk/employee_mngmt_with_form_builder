@@ -15,8 +15,8 @@
                 <i class="flaticon-user m--font-primary"></i>
               </span>
                             <h3 class="m-portlet__head-text">
-                              {% if role == 'workflow' %}
-                              {% trans 'Edit Workflow' %}
+                              {% if role == 'employee' %}
+                              {% trans 'Edit Employee' %}
                               {% endif %}
                                 <small>{% trans 'Information' %}</small>
                             </h3>
@@ -24,8 +24,6 @@
                     </div>
                 </div>
                 <form id="token-form" method="{{form.method|default:'POST'}}" class="{{form.class}} m-form" action="{{form.action|default:request.path}}" {% if files %} enctype="multipart/form-data" {% endif %}>
-
-
                   <!-- ------------- -->
                   <div class="m-portlet__body">
                     {% if not token_included %}
@@ -135,6 +133,7 @@
                    {% endfor %}
                   </div>
                  </div>
+                 <div id="dynForm" style="margin-left:35px;margin-bottom:20px;"></div>
                  <!-- ------------- -->
                  <div class="m-portlet__foot m-portlet__foot--fit">
                   <div class="m-form__actions">
@@ -144,12 +143,12 @@
 
                         <div id="buttons-parent" class="buttons">
                           <div class="m-loader m-loader--brand custom-loader" style="width: 30px; display: none;"></div>
-                          <button type="submit" name="token_submit"  id="token-send" class=" btn btn-brand" disabled="disabled">
-                            {% trans 'Save changes'%}
+                          <button type="submit" name="token_submit"  id="token-send" class=" btn btn-brand">
+                            {% trans 'Save'%}
                           </button>
-                          <button type="reset" id="form-reset" class=" btn btn-warning">
+                          {% comment %} <button type="reset" id="form-reset" class=" btn btn-warning">
                             {% trans 'Clear'%}
-                          </button>
+                          </button> {% endcomment %}
                           <button type="button" name="back" onclick="window.history.back();" id="form-back" class=" btn btn-outline-dark">
                             {% trans 'Back'%}
                           </button>
@@ -193,23 +192,35 @@
   {% endif %}
 
   <script>
-  var initialValues = {};
-  var complaint_id = "{{ complaint_id }}";
-  var manage_complaints_url = "{{ manage_complaints }}"
+  //var initialValues = {};
+  var employee_id = "{{ employee_id }}";
+  var manage_employee_url = "{{ manage_employee }}"
   var role = "{{ role }}"
+  let $formSelect = $('#id_form');
+  function collectFormData(){
+      const form = document.getElementById('dynForm');
+      const inputs = form.querySelectorAll('input, textarea, select');
+      const data = {};
+      inputs.forEach(el => {
+        if(el.type==='checkbox') data[el.name] = el.checked;
+        else data[el.name] = el.value;
+      });
+      return data;
+    }
   function token_send(obj){
-    var formData = new FormData(document.getElementById('token-form'));
-    workflowCompliantUrl = workflowCompliantUrl.replace('<complaint_id>', complaint_id);
+    const formId = document.getElementById('id_form').value;
+    const payload = { form: parseInt(formId), data: collectFormData() };
+    getEmployeeUrl = getEmployeeUrl.replace('<employee_id>', employee_id);
     callApi({
-      url: serverUrl + workflowCompliantUrl,
+      url: serverUrl + getEmployeeUrl,
       method: 'PUT',
-      data: formData,
+      data: JSON.stringify(payload),
       processData: false,
-      contentType: false,
+      contentType: 'application/json',
       success: function(response) {
-          toastr.success("Complaint workflow updated successfully!");
+          toastr.success("Employee updated successfully!");
           setTimeout(function() {
-            window.location.href = manage_complaints_url;
+            window.location.href = manage_employee_url
           }, 500);
       },
       error: function(xhr, status, error) {
@@ -226,6 +237,7 @@
   }
 
 $(document).ready(function(){
+  
 
     $.validator.addMethod(
       "regex",
@@ -237,6 +249,12 @@ $(document).ready(function(){
     );
     var errorClass = 'invalid-feedback';
     var rules = {
+      label: {
+        required: true
+      },
+      field_type: {
+        required: true
+      },
     }
     var messages = {
     }
@@ -273,28 +291,15 @@ $(document).ready(function(){
           $(element).addClass("is-valid");
       }
     });
-    getComplaintUrl = getComplaintUrl.replace('<complaint_id>', complaint_id);
+    getEmployeeUrl = getEmployeeUrl.replace('<employee_id>', employee_id);
     callApi({
-      url: serverUrl + getComplaintUrl,
+      url: serverUrl + getEmployeeUrl,
       method: 'GET',
       success: function(response) {
-        var complaintData = response;
-        $('form#token-form input, form#token-form select, form#token-form textarea').each(function() {
-          if (namesArray.includes($(this).attr('name'))){
-            if ($(this).attr('name') === 'status_remark') {
-              console.log(complaintData[$(this).attr('name')])
-              $('textarea[name="'+$(this).attr('name')+'"]').val(complaintData[$(this).attr('name')]).trigger('change');
-            } else if ($(this).attr('name') == 'status') {
-              $('select[name="'+$(this).attr('name')+'"]').val(complaintData[$(this).attr('name')])
-              initialValues[$(this).attr('name')] = $(this).val();
-            }
-            else {
-              $('input[name="'+$(this).attr('name')+'"]').val(complaintData[$(this).attr('name')]).trigger('change');
-            }
-            initialValues[$(this).attr('name')] = $(this).val();
-            changeChecking()
-          }
-        });
+        var employeeData = response;
+        let option = new Option(employeeData.form_name, employeeData.form, true, true);
+        $formSelect.append(option).trigger('change');
+        handleFormSelection({ id: employeeData.form, text: employeeData.form_name }, employeeData);
       },
       error: function(xhr, status, error) {
             if (xhr.status === 401 || xhr.status === 403) {
@@ -305,51 +310,87 @@ $(document).ready(function(){
       }
     });
 
-    var namesArray = ['status', 'status_remark']
-
-    $("form#token-form").focusout( function(){
-      changeChecking()
-    })
-
-    $(document).on('click','#form-reset', function(){
-      event.preventDefault();
-      $('form#token-form input, form#token-form select, form#token-form textarea').each(function() {
-        var fieldName = $(this).attr('name');
-        $(this).val(initialValues[fieldName]);
-      });
-      $("#token-send").attr("disabled", true)
-      $("button[name='personal_details']").attr("disabled", true)
-      $('#token-form').find('.invalid-feedback').remove()
-      changeChecking()
-    })
-
-    function changeChecking(){
-      var current_values = {}
-
-      $('form#token-form input, form#token-form select, form#token-form textarea').each(function() {
-        var elementName = $(this).attr('name');
-        if (namesArray.includes(elementName)){
-          current_values[elementName] = $(this).val();
+    // Initialize Select2
+    $formSelect.select2({
+      placeholder: $formSelect.attr('data-placeholder'),
+      minimumInputLength: 1,
+      language: {
+        inputTooShort: function(args) {
+          return "Please enter 1 or more characters";
         }
-      });
-
-      var isSame = true;
-      console.log(initialValues, current_values)
-      namesArray.forEach( value => {
-        if (initialValues[value] != current_values[value]) {
-          isSame = false;
-          return false;
+      },
+      ajax: {
+        url: $formSelect.attr('data-url'),
+        dataType: 'json',
+        delay: 250,
+        processResults: function (data) {
+          return {
+            results: data.results.map(function(item) {
+              return { id: item.id, text: item.text };
+            })
+          };
         }
-      });
-      console.log("is same", isSame);
-      if (isSame){
-        $("#token-send").attr("disabled", true)
-        $("button[name='personal_details']").attr("disabled", true)
-      }else{
-        $("#token-send").attr("disabled", false)
-        $("button[name='personal_details']").attr("disabled", false)
       }
+    });
+
+    $formSelect.on('select2:select', function (e) {
+      console.log(e.params.data);
+     handleFormSelection(e.params.data, []);
+    });
+
+    function handleFormSelection(selectedData, employeeData) {
+      console.log("Selected form:", selectedData);
+      getFormFieldsUrlExact = getFormFieldsUrl.replace('<form_id>', selectedData.id);
+      callApi({
+        url: serverUrl + getFormFieldsUrlExact,
+        method: 'GET',
+        success: function(response) {
+          var fieldData = response;
+          if (fieldData && fieldData.length > 0) {
+            createDynamicForm(fieldData, employeeData);
+          } else {
+            toastr.error("No fields found for the selected form.");
+          }
+        },
+        error: function(xhr) {
+          if (xhr.status === 401 || xhr.status === 403) {
+            window.location.href = dashboardUrl;
+          } else {
+            toastr.error("Something went wrong please try again");
+          }
+        }
+      });
     }
+
+    function createDynamicForm(fields, employeeData) {
+      console.log("Creating dynamic form with fields:", fields);
+      const formDiv = document.getElementById('dynForm');
+      formDiv.innerHTML='';
+      fields.forEach(f => {
+        const wrap = document.createElement('div');
+        const label = document.createElement('label'); label.textContent = `${f.label}${f.required?' *:':':'}`;
+        let input;
+        if (f.field_type === 'textarea'){ input = document.createElement('textarea'); }
+        else if (f.field_type === 'checkbox'){ input = document.createElement('input'); input.type = 'checkbox'; }
+        //else if (f.field_type === 'select'){ input = document.createElement('select'); (f.options||[]).forEach(opt=>{ const o=document.createElement('option'); o.value=opt; o.textContent=opt; input.appendChild(o); }); }
+        else { input = document.createElement('input'); input.type = (f.field_type==='password'?'password': f.field_type); }
+        input.name = f.label; input.required = !!f.required; input.dataset.fieldId = f.id;
+        wrap.appendChild(label);
+        // include space between label and input
+        wrap.appendChild(document.createElement('br'));
+        wrap.appendChild(input);
+        formDiv.appendChild(wrap);
+        // Set initial values if editing
+        if (employeeData && employeeData.data && employeeData.data[f.label] !== undefined) {
+          if (f.field_type === 'checkbox') {
+            input.checked = employeeData.data[f.label];
+          } else {
+            input.value = employeeData.data[f.label];
+          }
+        }
+      });
+    }
+
   })
 </script>
 {% endblock %}

@@ -114,12 +114,13 @@
                             <span class="menu-title">{% trans 'Manage Forms' %}</span>
                         </a>
                     </li>
-                    {% comment %}<li class="nav-item">
-                        <a class="nav-link" href="{% url 'review_orders' request %}">
-                            <i class="bi bi-pencil menu-icon"></i>
-                            <span class="menu-title">{% trans 'Review Orders' %}</span>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manage_employee' %}">
+                            <i class="bi bi-person menu-icon"></i>
+                            <span class="menu-title">{% trans 'Manage Employees' %}</span>
                         </a>
                     </li>
+                    {% comment %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'complete_orders' request %}">
                             <i class="bi bi-check-circle menu-icon"></i>

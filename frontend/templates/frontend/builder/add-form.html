@@ -59,19 +59,6 @@
                       {% endif %}
 
                       {% for hidden_field in form.hidden_fields %}
-                      {% comment %}
-                      {% if hidden_field.errors %}
-                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                        {% for error in hidden_field.errors %}
-                        {{ error }}
-                        {% endfor %}
-
-                      </div>
-                      {% endif %}
-                      {% endcomment %}
                       {{hidden_field}}
                       {% endfor %}
                     </div>

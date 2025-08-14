@@ -3,9 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Max
-from .models import Form, Field
-from .serializers import FormSerializer, FieldSerializer
+from .models import Form, Field, Employee
+from .serializers import FormSerializer, FieldSerializer, EmployeeSerializer
 from employee_mngmt.paginations import StandardResultsSetPagination
+from dal import autocomplete
+from django.db.models import Q
 
 # Create your views here.
 
@@ -59,3 +61,52 @@ class FieldViewSet(viewsets.ModelViewSet):
       serializer_class = FieldSerializer
       def get_queryset(self):
             return Field.objects.filter(form__created_by=self.request.user).order_by('order')
+
+class EmployeeViewSet(viewsets.ModelViewSet):
+      permission_classes=[IsAuthenticated]
+      serializer_class = EmployeeSerializer
+      pagination_class = StandardResultsSetPagination
+
+      def get_queryset(self):
+            qs = Employee.objects.filter(created_by=self.request.user).order_by('-id')
+            form_id = self.request.query_params.get('form')
+            if form_id:
+                  qs = qs.filter(form_id=form_id)
+            # Build filters from arbitrary query params (exact match, case-insensitive)
+            ignore = {'form','page','page_size','ordering'}
+            filters = {k: v for k, v in self.request.query_params.items() if k not in ignore}
+            if filters:
+                  ids = []
+                  for e in qs:
+                        data = e.data or {}
+                        ok = True
+                        for k, v in filters.items():
+                              if str(data.get(k, '')).lower() != str(v).lower():
+                                    ok = False; break
+                  if ok: ids.append(e.id)
+                  qs = qs.filter(id__in=ids)
+            return qs
+
+      def perform_create(self, serializer):
+            serializer.save(created_by=self.request.user)
+
+class FormAutocomplete(autocomplete.Select2QuerySetView):
+      def get_queryset(self):
+            qs = None
+
+            if self.q:
+                  qs = Form.objects.filter(
+                        Q(name__icontains=self.q)
+                  ).values(
+                        'name',
+                        'id'
+                  ).distinct()
+            else:
+                  qs = Form.objects.all().order_by('name')[:20].values('name', 'id')
+            return qs
+
+      def get_result_label(self, result):
+            return result.get('name')
+
+      def get_result_value(self, result):
+            return result.get('id')

@@ -44,10 +44,10 @@
 {% block javascript %}
 
 <script type="text/javascript">
-      
+{/*       
 var filter = {{ filter | safe }};
-var is_staff = {{ is_staff|safe }};
-let isFirstParam = true;
+var is_staff = {{ is_staff|safe }}; */}
+{/* let isFirstParam = true;
 function appendQueryParam(url, key, value) {
     if (isFirstParam) {
         isFirstParam = false;
@@ -55,18 +55,18 @@ function appendQueryParam(url, key, value) {
     } else {
         return url + '&' + key + '=' + value;
     }
-}
+} */}
 window.onload = function() {
-	var searchParams = new URLSearchParams(new URL(window.location.href).search);
-	var loadUrl = serverUrl + getComplaintsUrl;
-	for (let key in filter) {
-        if (filter.hasOwnProperty(key)) {
-			var queryKey = searchParams.get(key);
-			if (queryKey) {
-				loadUrl = appendQueryParam(loadUrl, key, queryKey);
-			}
-		}
-	}
+	// var searchParams = new URLSearchParams(new URL(window.location.href).search);
+	var loadUrl = serverUrl + getEmployeesUrl;
+	// for (let key in filter) {
+      //   if (filter.hasOwnProperty(key)) {
+	// 		var queryKey = searchParams.get(key);
+	// 		if (queryKey) {
+	// 			loadUrl = appendQueryParam(loadUrl, key, queryKey);
+	// 		}
+// 	}
+	// }
 	callApi({
 		url: loadUrl,
 		method: 'GET',
@@ -87,14 +87,14 @@ window.onload = function() {
 		}
 	});
 
-	for (let key in filter) {
-        if (filter.hasOwnProperty(key)) {
-			const initialFilterValue = getQueryParam(key);
-			if (initialFilterValue) {
-				document.getElementById(key).value = initialFilterValue;
-			}
-		}
-	}
+	// for (let key in filter) {
+      //   if (filter.hasOwnProperty(key)) {
+	// 		const initialFilterValue = getQueryParam(key);
+	// 		if (initialFilterValue) {
+	// 			document.getElementById(key).value = initialFilterValue;
+	// 		}
+	// 	}
+	// }
 };
 
 function updateQueryParam(key, value) {
@@ -274,49 +274,28 @@ function populateTable(dataResp) {
 
 	    // Insert primary key column if needed
 	    {% if 'pk' in headers %}
-	    	row += "<td>" + object.pk + "</td>";
+	    	row += "<td>" + object.id + "</td>";
 	    {% endif %}
 
 	    // Insert name column
-	    row += "<td>" + object.title + "</td>";
+	    row += "<td>" + object.name + "</td>";
 
 	    // Insert email column
-	    row += "<td>" + object.assignee_name + "</td>";
-
-	    row += "<td>" + object.status_display + "</td>";
+	    row += "<td>" + object.created_by_name + "</td>";
 
 	    // Insert created date column
-	    row += "<td>" + formatTimestamp(object.createdAt); + "</td>";
+	    row += "<td>" + formatTimestamp(object.created_at); + "</td>";
 
 	    {% if edit_any_user  %}
-	    	var viewUrl = "{% url 'complaint_view' %}?compliant_id=" + object.pk + "&redirect=true&from=manage_compliant";
-	    	var editUrl = "{% url 'manage_complaint-edit' %}?complaint_id=" + object.pk + "&role=complaint&redirect=true&from=manage_compliant";
-		var workflowUrl = "{% url 'manage_complaint-workflow' %}?complaint_id=" + object.pk + "&role=workflow&redirect=true&from=manage_compliant";
+	    	var editUrl = "{% url 'manage_employee-edit' %}?employee_id=" + object.id + "&role=employee&redirect=true&from=manage_employee";
 		var adminActions = `
 		<div class="btn-actions">
-			<a class="btn btn-sm btn-svg-icon btn-icon--lite btn-icon--active-brand" href="${viewUrl}" target="_blank">
-				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="m-svg-icon"> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <rect x="0" y="0" width="24" height="24"></rect> <path d="M3,12 C3,12 5.45454545,6 12,6 C16.9090909,6 21,12 21,12 C21,12 16.9090909,18 12,18 C5.45454545,18 3,12 3,12 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"></path> <path d="M12,15 C10.3431458,15 9,13.6568542 9,12 C9,10.3431458 10.3431458,9 12,9 C13.6568542,9 15,10.3431458 15,12 C15,13.6568542 13.6568542,15 12,15 Z" fill="#000000" opacity="0.3"></path> </g></svg>
-			</a>
 			<a href="${editUrl}">
 				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="m-svg-icon"> <g><path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="#000000"></path> <path d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z" fill="#000000"></path></g></svg>
 			</a>
 		</div>
 		`
-		var employeeActions = `
-		<div class="btn-actions">
-			<a class="btn btn-sm btn-svg-icon btn-icon--lite btn-icon--active-brand" href="${viewUrl}" target="_blank">
-				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" class="m-svg-icon"> <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <rect x="0" y="0" width="24" height="24"></rect> <path d="M3,12 C3,12 5.45454545,6 12,6 C16.9090909,6 21,12 21,12 C21,12 16.9090909,18 12,18 C5.45454545,18 3,12 3,12 Z" fill="#000000" fill-rule="nonzero" opacity="0.3"></path> <path d="M12,15 C10.3431458,15 9,13.6568542 9,12 C9,10.3431458 10.3431458,9 12,9 C13.6568542,9 15,10.3431458 15,12 C15,13.6568542 13.6568542,15 12,15 Z" fill="#000000" opacity="0.3"></path> </g></svg>
-			</a>
-			<a href="${workflowUrl}">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="m-svg-icon">
-					<path d="M16 3H21V8H19V5.41L13.41 11L19 16.59V14H21V19H16V17H18.59L13 11.41L7.41 17H10V19H5V14H7V16.59L12.59 11L7 5.41V8H5V3H10V5H7.41L13 10.59L18.59 5H16V3Z" fill="#000000"/>
-				</svg>
-			</a>
-		</div>
-		`
-		if (is_staff === true) row += "<td class='sticky-action'>" + adminActions + "</td>";
-		else if (is_staff === false) row += "<td class='sticky-action'>" + employeeActions + "</td>";
-		//row += "<td>" + actions + "</td>";
+		row += "<td class='sticky-action'>" + adminActions + "</td>";
 	    {% endif %}
 
 	    row += "</tr>";
@@ -411,7 +390,7 @@ $('.bulk-action-button').click(function(e){
 	return true
 });
 
-$(document).ready(function() {
+{/* $(document).ready(function() {
     for (let key in filter) {
         if (filter.hasOwnProperty(key)) {
             let value = filter[key];
@@ -451,7 +430,7 @@ $(document).ready(function() {
 			document.getElementById('dropdown-menu').style.removeProperty('display')
 		}
 	}
-});
+}); */}
 
 </script>
 <script src="{% static 'frontend/js/datatables.js' %}" type="text/javascript"></script>

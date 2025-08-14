@@ -1,6 +1,7 @@
 
 from django.urls import path
-from .views import (Home, UserLoginView, AflDasboardView, ProfileView, Signup, ChangePassword, AddForm, ManageForm, AflManageFormsEdit)
+from .views import (Home, UserLoginView, AflDasboardView, ProfileView, Signup, ChangePassword, AddForm, ManageForm, AflManageFormsEdit,
+                    ManageEmployee,AddEmployee, AflManageEmployeeEdit)
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -14,4 +15,7 @@ urlpatterns = [
     path('manage-form/', ManageForm.as_view(), name='manage_form'),
     path('add-form/', AddForm.as_view(), name='add_form'),
     path('manage-form/edit/', AflManageFormsEdit.as_view(), name="manage_form-edit"),
+    path('manage-employee/', ManageEmployee.as_view(), name='manage_employee'),
+    path('add-new-employee/', AddEmployee.as_view(), name='add_employee'),
+    path('manage-employee/edit/', AflManageEmployeeEdit.as_view(), name="manage_employee-edit"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
