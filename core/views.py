@@ -4,15 +4,20 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Max
 from .models import Form, Field, Employee
-from .serializers import FormSerializer, FieldSerializer, EmployeeSerializer
+from .serializers import FormSerializer, FieldSerializer, EmployeeSerializer, EmployeeDeleteSerializer
 from employee_mngmt.paginations import StandardResultsSetPagination
 from dal import autocomplete
 from django.db.models import Q
-
+from rest_framework.views import APIView
+from employee_mngmt.utils import apiSuccess
+from rest_framework import exceptions as ApiCoreExceptions
+import employee_mngmt.exceptions as ApiExceptions
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # Create your views here.
 
 class FormViewSet(viewsets.ModelViewSet):
-      permission_classes=[IsAuthenticated]
+      permission_classes = (IsAuthenticated,)
+      authentication_classes = [JWTAuthentication]
       serializer_class = FormSerializer
       pagination_class = StandardResultsSetPagination
 
@@ -57,13 +62,15 @@ class FormViewSet(viewsets.ModelViewSet):
             return Response({'detail':'Reordered.'})
 
 class FieldViewSet(viewsets.ModelViewSet):
-      permission_classes=[IsAuthenticated]
+      permission_classes = (IsAuthenticated,)
+      authentication_classes = [JWTAuthentication]
       serializer_class = FieldSerializer
       def get_queryset(self):
             return Field.objects.filter(form__created_by=self.request.user).order_by('order')
 
 class EmployeeViewSet(viewsets.ModelViewSet):
-      permission_classes=[IsAuthenticated]
+      permission_classes = (IsAuthenticated,)
+      authentication_classes = [JWTAuthentication]
       serializer_class = EmployeeSerializer
       pagination_class = StandardResultsSetPagination
 
@@ -110,3 +117,21 @@ class FormAutocomplete(autocomplete.Select2QuerySetView):
 
       def get_result_value(self, result):
             return result.get('id')
+
+class DeleteEmployee(APIView):
+      serializer_class = EmployeeDeleteSerializer
+      permission_classes = (IsAuthenticated,)
+      authentication_classes = [JWTAuthentication]
+      def delete(self, request, *args, **kwargs):
+            try:
+                  serializer = self.serializer_class(data=request.data, context={'request': request})
+                  if serializer.is_valid(raise_exception=True):
+                        serializer.save()
+                  return Response(apiSuccess(), status=status.HTTP_200_OK)
+            except Exception as e:
+                  if isinstance(e, ApiCoreExceptions.APIException):
+                        raise
+                  else:
+                        print(e)
+                        # apiErrorLog(request, e)
+                        raise ApiExceptions.InternalServerError()

@@ -372,6 +372,7 @@ class ManageEmployee(View):
 
 
 		bulk_actions = {}
+		bulk_actions['delete_employee'] = {'label':  _('Delete Employee'), 'class': 'bi bi-trash mr-1'}
 		context['bulk_actions'] = bulk_actions
 		filters = {}
 		context['filter'] = filters

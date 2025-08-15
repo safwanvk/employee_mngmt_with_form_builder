@@ -260,10 +260,10 @@ function populateTable(dataResp) {
   
 	    // Insert bulk action checkbox if needed
 	    {% if bulk_actions %}
-	    	row += "<td attr-id='" + object.pk + "'>";
+	    	row += "<td attr-id='" + object.id + "'>";
 			row += "<div class='form-check form-check-flat form-check-primary'>";
 			row += "<label class='form-check-label m-checkbox m-checkbox--single m-checkbox--solid m-checkbox--brand'>";
-			row += "<input type='checkbox' name='bulk_id' id='option" + object.pk + "' value='" + object.pk + "' class='form-check-input bulk-checkbox m-checkable'><i class='input-helper'></i>";
+			row += "<input type='checkbox' name='bulk_id' id='option" + object.id + "' value='" + object.id + "' class='form-check-input bulk-checkbox m-checkable'><i class='input-helper'></i>";
 			row += "</label>";
 			row += "</div>";
 			row += "</td>";
@@ -328,12 +328,12 @@ $('.bulk-action-button').click(function(e){
 	} else {
 	    e.preventDefault();
 	    swal({
-		  title: ((typeof swal_title !== 'undefined' && swal_title) ? swal_title : Trans.trans('Are you sure?')),
-		  text: ((typeof swal_text !== 'undefined' && swal_text) ? swal_text : Trans.trans("You will not be able to recover it !")),
+		  title: ((typeof swal_title !== 'undefined' && swal_title) ? swal_title : 'Are you sure?'),
+		  text: ((typeof swal_text !== 'undefined' && swal_text) ? swal_text : "You will not be able to recover it !"),
 		  type: 'warning',
 		  showCancelButton: true,
-		  confirmButtonText: ((typeof swal_confirm_button !== 'undefined' && swal_confirm_button) ? swal_confirm_button : Trans.trans('Yes')),
-		  cancelButtonText: ((typeof swal_cancel_button !== 'undefined' && swal_cancel_button) ? swal_cancel_button : Trans.trans('Cancel')),
+		  confirmButtonText: ((typeof swal_confirm_button !== 'undefined' && swal_confirm_button) ? swal_confirm_button : 'Yes'),
+		  cancelButtonText: ((typeof swal_cancel_button !== 'undefined' && swal_cancel_button) ? swal_cancel_button : 'Cancel'),
 	    }).then((result) => {
 		  if (result.value || result === true) {
 			if (typeof action_confirm !== 'undefined' && action_confirm == 'true') {
@@ -359,14 +359,14 @@ $('.bulk-action-button').click(function(e){
 				}
 				var formData = new FormData(document.getElementById('bulk-operation-form'));
 				callApi({
-					url: serverUrl + deleteStaffUrl,
+					url: serverUrl + deleteEmployeeUrl,
 					method: 'DELETE',
 					data: formData,
 					processData: false,
 					contentType: false,
 					success: function(response) {
 					  if (response.status_code === 200) {
-					    toastr.success(Trans.trans("Staff deleted successfully!"));
+					    toastr.success("Employee deleted successfully!");
 					    setTimeout(function() {
 							window.location.reload();
 						  }, 500);
@@ -377,9 +377,9 @@ $('.bulk-action-button').click(function(e){
 					    window.location.href = dashboardUrl
 					  } else if (xhr.status === 400) {
 					    console.log(xhr, error)
-					    toastr.warning(Trans.trans("Please select atleast one item"));
+					    toastr.warning("Please select atleast one item");
 					  } else {
-					    toastr.error(Trans.trans("Something went wrong please try again"));
+					    toastr.error("Something went wrong please try again");
 					  }
 					}
 				    });
