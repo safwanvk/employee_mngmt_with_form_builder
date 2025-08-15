@@ -57,24 +57,33 @@ function appendQueryParam(url, key, value) {
     }
 } */}
 window.onload = function() {
-	// var searchParams = new URLSearchParams(new URL(window.location.href).search);
-	var loadUrl = serverUrl + getEmployeesUrl;
-	// for (let key in filter) {
-      //   if (filter.hasOwnProperty(key)) {
-	// 		var queryKey = searchParams.get(key);
-	// 		if (queryKey) {
-	// 			loadUrl = appendQueryParam(loadUrl, key, queryKey);
-	// 		}
-// 	}
-	// }
+	var loadFormUrl = serverUrl + getFormsUrl;
 	callApi({
-		url: loadUrl,
+		url: loadFormUrl,
 		method: 'GET',
 		success: function(response) {
 			if (response.status_code === 200) {
-				if (response.data.count === 0 ){
-					showEmptyDataMessage()
-				} else populateTable(response.data);
+				var data = response.data.results
+				if (data.length > 0) {
+					var selectElement = document.getElementById('form-filter');
+					data.forEach(function(form) {
+						var option = document.createElement('option');
+						option.value = form.id;
+						option.textContent = form.name;
+						selectElement.appendChild(option);
+					});
+				} else {
+					var selectElement = document.getElementById('form-filter');
+					var option = document.createElement('option');
+					option.value = '';
+					option.textContent = 'No forms available';
+					selectElement.appendChild(option);
+				}
+
+				const initialForm = getQueryParam('form');
+				if (initialForm) {
+					selectElement.value = initialForm;
+				}
 			}
 		},
 		error: function(xhr, status, error) {
@@ -86,6 +95,46 @@ window.onload = function() {
                   }
 		}
 	});
+	// var searchParams = new URLSearchParams(new URL(window.location.href).search);
+	var loadUrl = serverUrl + getEmployeesUrl;
+	// for (let key in filter) {
+      //   if (filter.hasOwnProperty(key)) {
+	// 		var queryKey = searchParams.get(key);
+	// 		if (queryKey) {
+	// 			loadUrl = appendQueryParam(loadUrl, key, queryKey);
+	// 		}
+// 	}
+	// }
+	var searchParams = new URLSearchParams(new URL(window.location.href).search);
+	var form = searchParams.get('form');
+	if (form) {
+		if (form != '') {
+			loadUrl = loadUrl + '?form=' + form
+			callApi({
+				url: loadUrl,
+				method: 'GET',
+				success: function(response) {
+					if (response.status_code === 200) {
+						if (response.data.count === 0 ){
+							showEmptyDataMessage()
+						} else populateTable(response.data);
+					}
+				},
+				error: function(xhr, status, error) {
+					if (xhr.status === 401 || xhr.status === 403) {
+						window.location.href = dashboardUrl
+					} else {
+						showEmptyDataMessage()
+						toastr.error("Something went wrong please try again");
+					}
+				}
+			});
+		} else {
+			showEmptyDataMessage()
+		}
+	} else {
+		showEmptyDataMessage()
+	}
 
 	// for (let key in filter) {
       //   if (filter.hasOwnProperty(key)) {
@@ -131,8 +180,8 @@ if (document.getElementById('filter-clear-button')) {
 function getQueryParam(key) {
     const urlParams = new URLSearchParams(window.location.search);
     const paramValue = urlParams.get(key);
-	if (key === 'status') {
-		if (paramValue && ['true', 'false'].includes(paramValue)) {
+	if (key === 'form') {
+		if (paramValue && paramValue !== '') {
 			return paramValue;
 		}
 	} else {
@@ -252,55 +301,56 @@ function populateTable(dataResp) {
 	    DataDiv.style.display = 'block';
 	}
 
-	var tableBody = document.querySelector("#m_table_1 tbody");
-	tableBody.innerHTML = ""; // Clear existing table data
-  
-	data.forEach(function(object, index) {
-	    var row = "<tr>";
-  
-	    // Insert bulk action checkbox if needed
-	    {% if bulk_actions %}
-	    	row += "<td attr-id='" + object.id + "'>";
-			row += "<div class='form-check form-check-flat form-check-primary'>";
-			row += "<label class='form-check-label m-checkbox m-checkbox--single m-checkbox--solid m-checkbox--brand'>";
-			row += "<input type='checkbox' name='bulk_id' id='option" + object.id + "' value='" + object.id + "' class='form-check-input bulk-checkbox m-checkable'><i class='input-helper'></i>";
-			row += "</label>";
-			row += "</div>";
-			row += "</td>";
-	    {% endif %}
-
-	    // Insert index column
-	    row += "<td>" + (index + 1) + "</td>";
-
-	    // Insert primary key column if needed
-	    {% if 'pk' in headers %}
-	    	row += "<td>" + object.id + "</td>";
-	    {% endif %}
-
-	    // Insert name column
-	    row += "<td>" + object.name + "</td>";
-
-	    // Insert email column
-	    row += "<td>" + object.created_by_name + "</td>";
-
-	    // Insert created date column
-	    row += "<td>" + formatTimestamp(object.created_at); + "</td>";
-
-	    {% if edit_any_user  %}
-	    	var editUrl = "{% url 'manage_employee-edit' %}?employee_id=" + object.id + "&role=employee&redirect=true&from=manage_employee";
-		var adminActions = `
-		<div class="btn-actions">
-			<a href="${editUrl}">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="m-svg-icon"> <g><path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="#000000"></path> <path d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z" fill="#000000"></path></g></svg>
-			</a>
-		</div>
-		`
-		row += "<td class='sticky-action'>" + adminActions + "</td>";
-	    {% endif %}
-
-	    row += "</tr>";
-	    tableBody.innerHTML += row;
+	var tableHead = document.querySelector("#m_table_1 thead");
+	tableHead.innerHTML = "";
+	var headers = Object.keys(data[0].data);
+	var headerRow = document.createElement("tr");
+	// Add index column
+	var indexHeader = document.createElement("th");
+	indexHeader.textContent = "#";
+	headerRow.appendChild(indexHeader);
+	// Add other headers
+	headers.forEach(function(header) {
+		var th = document.createElement("th");
+		th.textContent = header;
+		headerRow.appendChild(th);
 	});
+	// Add action column
+	var actionHeader = document.createElement("th");
+	actionHeader.textContent = "Actions";
+	headerRow.appendChild(actionHeader);
+	tableHead.appendChild(headerRow);
+
+	var tableBody = document.querySelector("#m_table_1 tbody");
+	tableBody.innerHTML = "";
+	data.forEach(function(item, index) {
+		var row = document.createElement("tr");																														
+		// Add index cell
+		var indexCell = document.createElement("td");
+		indexCell.textContent = index + 1;
+		row.appendChild(indexCell);
+		headers.forEach(function(header) {
+			var td = document.createElement("td");
+			td.textContent = item.data[header] || '';
+			row.appendChild(td);
+		});
+		// add action of commented code
+		var actionCell = document.createElement("td");
+		actionCell.className = 'sticky-action';
+		var editUrl = "{% url 'manage_employee-edit' %}?employee_id=" + item.id + "&role=employee&redirect=true&from=manage_employee";
+		var adminActions = `
+			<div class="btn-actions">
+				<a href="${editUrl}">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="m-svg-icon"> <g><path opacity="0.3" d="M21.4 8.35303L19.241 10.511L13.485 4.755L15.643 2.59595C16.0248 2.21423 16.5426 1.99988 17.0825 1.99988C17.6224 1.99988 18.1402 2.21423 18.522 2.59595L21.4 5.474C21.7817 5.85581 21.9962 6.37355 21.9962 6.91345C21.9962 7.45335 21.7817 7.97122 21.4 8.35303ZM3.68699 21.932L9.88699 19.865L4.13099 14.109L2.06399 20.309C1.98815 20.5354 1.97703 20.7787 2.03189 21.0111C2.08674 21.2436 2.2054 21.4561 2.37449 21.6248C2.54359 21.7934 2.75641 21.9115 2.989 21.9658C3.22158 22.0201 3.4647 22.0084 3.69099 21.932H3.68699Z" fill="#000000"></path> <path d="M5.574 21.3L3.692 21.928C3.46591 22.0032 3.22334 22.0141 2.99144 21.9594C2.75954 21.9046 2.54744 21.7864 2.3789 21.6179C2.21036 21.4495 2.09202 21.2375 2.03711 21.0056C1.9822 20.7737 1.99289 20.5312 2.06799 20.3051L2.696 18.422L5.574 21.3ZM4.13499 14.105L9.891 19.861L19.245 10.507L13.489 4.75098L4.13499 14.105Z" fill="#000000"></path></g></svg>
+				</a>
+			</div>
+			`
+		actionCell.innerHTML = adminActions;
+		row.appendChild(actionCell);
+		// Append the row to the table body
+		tableBody.appendChild(row);
+	});
+
 
 	var paginationHTML = generatePaginationHTML(dataResp);
 	var paginationBody = document.querySelector(".igl-pagination");
@@ -431,6 +481,12 @@ $('.bulk-action-button').click(function(e){
 		}
 	}
 }); */}
+
+document.getElementById('form-filter').addEventListener('change', function() {
+    const selectedValue = this.value;
+    updateQueryParam('form', selectedValue);
+    window.location.reload();
+});
 
 </script>
 <script src="{% static 'frontend/js/datatables.js' %}" type="text/javascript"></script>

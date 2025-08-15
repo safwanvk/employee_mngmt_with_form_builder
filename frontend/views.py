@@ -384,6 +384,11 @@ class ManageEmployee(View):
 
 		# if not settings.DEBUG:
 		# 	del headers['pk']
+  
+		context['form_filter'] = {}
+		context['form_filter']['options'] = [
+      		{'label': _('Select form'), 'value': ''},
+		]
 
 		context['users_role'] = 'staff'
 		context['show_username'] = True

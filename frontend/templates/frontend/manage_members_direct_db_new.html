@@ -129,11 +129,11 @@
                   <option value="3">Four</option>
                 </select>
               </div> {% endcomment %}
-              {% if step_filter %}
+              {% if form_filter %}
                 <div class="drpdwn">
                   {% comment %} <label class="form-label">{{key}}</label> {% endcomment %}
-                  <select id="step-filter" class="form-select" style="border: 1px solid #82b927" aria-label="Default select example">
-                    {% for option in step_filter.options %}
+                  <select id="form-filter" class="form-select" style="border: 1px solid #82b927;min-width:200px !important" aria-label="Default select example">
+                    {% for option in form_filter.options %}
                       <option value="{{ option.value }}">{{ option.label }}</option>
                     {% endfor %}
                   </select>

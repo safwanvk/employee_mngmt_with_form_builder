@@ -338,9 +338,9 @@ $(document).ready(function(){
 
     $formSelect.on('select2:select', function (e) {
       let selectedData = e.params.data;
-      getFormFieldsUrl = getFormFieldsUrl.replace('<form_id>', selectedData.id);
+      getFormFieldsUrlOrg = getFormFieldsUrl.replace('<form_id>', selectedData.id);
       callApi({
-        url: serverUrl + getFormFieldsUrl,
+        url: serverUrl + getFormFieldsUrlOrg,
         method: 'GET',
         success: function(response) {
           var fieldData = response;
