@@ -351,6 +351,38 @@ function populateTable(dataResp) {
 	tableHead.innerHTML = "";
 	var headers = Object.keys(data[0].data);
 	var headerRow = document.createElement("tr");
+
+	var th = document.createElement("th");
+	th.setAttribute("width", "10");
+
+	var div = document.createElement("div");
+	div.className = "form-check form-check-flat form-check-primary";
+
+	var label = document.createElement("label");
+	label.className = "form-check-label m-checkbox m-checkbox--single m-checkbox--solid m-checkbox--brand";
+
+	var checkbox = document.createElement("input");
+	checkbox.type = "checkbox";
+	checkbox.className = "form-check-input m-group-checkable";
+
+	var icon = document.createElement("i");
+	icon.className = "input-helper";
+
+	var hiddenInput = document.createElement("input");
+	hiddenInput.type = "text";
+	hiddenInput.hidden = true;
+	hiddenInput.name = "export_type";
+	hiddenInput.value = "{{export_type}}"; // template variable
+
+	// build DOM structure
+	label.appendChild(checkbox);
+	label.appendChild(icon);
+	div.appendChild(label);
+	div.appendChild(hiddenInput);
+	th.appendChild(div);
+
+	headerRow.appendChild(th);
+	
 	// Add index column
 	var indexHeader = document.createElement("th");
 	indexHeader.textContent = "#";

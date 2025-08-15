@@ -381,11 +381,11 @@ $(document).ready(function(){
         wrap.appendChild(input);
         formDiv.appendChild(wrap);
         // Set initial values if editing
-        if (employeeData && employeeData.data && employeeData.data[f.label] !== undefined) {
+        if (employeeData && employeeData.data && employeeData.data[f.label.toUpperCase()] !== undefined) {
           if (f.field_type === 'checkbox') {
-            input.checked = employeeData.data[f.label];
+            input.checked = employeeData.data[f.label.toUpperCase()];
           } else {
-            input.value = employeeData.data[f.label];
+            input.value = employeeData.data[f.label.toUpperCase()];
           }
         }
       });
