@@ -61,12 +61,12 @@ class FormViewSet(viewsets.ModelViewSet):
                         continue
             return Response({'detail':'Reordered.'})
 
-class FieldViewSet(viewsets.ModelViewSet):
-      permission_classes = (IsAuthenticated,)
-      authentication_classes = [JWTAuthentication]
-      serializer_class = FieldSerializer
-      def get_queryset(self):
-            return Field.objects.filter(form__created_by=self.request.user).order_by('order')
+# class FieldViewSet(viewsets.ModelViewSet):
+#       permission_classes = (IsAuthenticated,)
+#       authentication_classes = [JWTAuthentication]
+#       serializer_class = FieldSerializer
+#       def get_queryset(self):
+#             return Field.objects.filter(form__created_by=self.request.user).order_by('order')
 
 class EmployeeViewSet(viewsets.ModelViewSet):
       permission_classes = (IsAuthenticated,)

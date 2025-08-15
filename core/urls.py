@@ -4,7 +4,7 @@ from .views import FormViewSet, FieldViewSet, EmployeeViewSet, FormAutocomplete,
 
 router=DefaultRouter()
 router.register('forms', FormViewSet, basename='forms')
-router.register('fields', FieldViewSet, basename='fields')
+# router.register('fields', FieldViewSet, basename='fields')
 router.register('employees', EmployeeViewSet, basename='employees')
 
 urlpatterns = [
