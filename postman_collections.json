@@ -1,0 +1,207 @@
+{
+  "info": {
+    "name": "Employee Management System API",
+    "_postman_id": "f93e3a1a-1234-4c56-8901-example",
+    "description": "Postman collection for Employee Management System with JWT Auth, Dynamic Form Builder, and Employee CRUD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/register/", "host": ["{{base_url}}"], "path": ["api", "v1", "register", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123\",\n  \"confirmpswd\": \"Password123\",\n  \"id\": \"EMP001\",\n  \"phone_number\": \"1234567890\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/token/", "host": ["{{base_url}}"], "path": ["api", "v1", "token", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john\",\n  \"password\": \"Password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/v1/token/refresh/", "host": ["{{base_url}}"], "path": ["api", "v1", "token", "refresh", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"<your-refresh-token>\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/users/me/", "host": ["{{base_url}}"], "path": ["api", "v1", "users", "me", ""] }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/v1/change-password/", "host": ["{{base_url}}"], "path": ["api", "v1", "change-password", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"Password123\",\n  \"new_password\": \"NewPassword123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Form Builder",
+      "item": [
+        {
+          "name": "Create Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/v1/forms/", "host": ["{{base_url}}"], "path": ["api", "v1", "forms", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Employee Details\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Forms",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/forms/", "host": ["{{base_url}}"], "path": ["api", "v1", "forms", ""] }
+          }
+        },
+        {
+          "name": "Get form fields",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": { "raw": "{{base_url}}/api/v1/forms/1/fields", "host": ["{{base_url}}"], "path": ["api", "v1", "forms", "1", "fields"] }
+          }
+        },
+        {
+          "name": "Add Field to Form",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/v1/forms/1/add_field/", "host": ["{{base_url}}"], "path": ["api", "v1", "forms", "1", "add_field", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Name\",\n  \"field_type\": \"text\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reorder Fields",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {"raw": "{{base_url}}/api/v1/forms/1/reorder/", "host": ["{{base_url}}"], "path": ["api", "v1", "forms", "1", "add_field", ""]},
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\"id\": 1, \"order\": 1}\n]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "item": [
+        {
+          "name": "Create Employee",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/v1/employees/", "host": ["{{base_url}}"], "path": ["api", "v1", "employees", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"form\": 1,\n  \"data\": {\n    \"NAME\": \"Alice\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "List Employees (with filter)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/v1/employees/?form=1&name=HR",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "employees", ""],
+              "query": [{ "key": "form", "value": "1" }, { "key": "name", "value": "Alice" }]
+            }
+          }
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/v1/employees/1/", "host": ["{{base_url}}"], "path": ["api", "v1", "employees", "1", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"form\": 1,\n  \"data\": {\n    \"Name\": \"Jacob\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Employee",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/api/v1/delete-employee/", "host": ["{{base_url}}"], "path": ["api", "v1", "delete-employee", ""] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bulk_id\": 1\n}"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000" },
+    { "key": "access_token", "value": "" }
+  ]
+}

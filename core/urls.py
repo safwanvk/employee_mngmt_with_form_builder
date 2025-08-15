@@ -1,6 +1,6 @@
 from django.urls import path, include, re_path
 from rest_framework.routers import DefaultRouter
-from .views import FormViewSet, FieldViewSet, EmployeeViewSet, FormAutocomplete, DeleteEmployee
+from .views import FormViewSet, EmployeeViewSet, FormAutocomplete, DeleteEmployee
 
 router=DefaultRouter()
 router.register('forms', FormViewSet, basename='forms')
