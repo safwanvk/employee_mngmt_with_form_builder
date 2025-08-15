@@ -375,6 +375,7 @@ class ManageEmployee(View):
 		bulk_actions['delete_employee'] = {'label':  _('Delete Employee'), 'class': 'bi bi-trash mr-1'}
 		context['bulk_actions'] = bulk_actions
 		filters = {}
+		filters['test'] = {'label' :  _('Dummy'), 'class': 'bi bi-receipt'}
 		context['filter'] = filters
 		headers['actions'] = _("Actions")
 		context['edit_any_user'] = True
@@ -394,7 +395,7 @@ class ManageEmployee(View):
 		context['show_username'] = True
 		context['not_sortable'] = ['id', 'name','created_by','created_at','actions']
 
-		page_filter = {}
+		# page_filter = {}
 		# page_filter['username'] = {'label' : _('Name'), 'type' : 'autocomplete','autocomplete_url':'user-dowline-autocomplete'}
 
 		# context['page_filter'] = page_filter

@@ -79,19 +79,10 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             form_id = self.request.query_params.get('form')
             if form_id:
                   qs = qs.filter(form_id=form_id)
-            # Build filters from arbitrary query params (exact match, case-insensitive)
             ignore = {'form','page','page_size','ordering'}
-            filters = {k: v for k, v in self.request.query_params.items() if k not in ignore}
-            if filters:
-                  ids = []
-                  for e in qs:
-                        data = e.data or {}
-                        ok = True
-                        for k, v in filters.items():
-                              if str(data.get(k, '')).lower() != str(v).lower():
-                                    ok = False; break
-                  if ok: ids.append(e.id)
-                  qs = qs.filter(id__in=ids)
+            for key, value in self.request.query_params.items():
+                  if key not in ignore:
+                        qs = qs.filter(**{f'data__{key.upper()}': value})
             return qs
 
       def perform_create(self, serializer):

@@ -44,18 +44,8 @@
 {% block javascript %}
 
 <script type="text/javascript">
-{/*       
 var filter = {{ filter | safe }};
-var is_staff = {{ is_staff|safe }}; */}
-{/* let isFirstParam = true;
-function appendQueryParam(url, key, value) {
-    if (isFirstParam) {
-        isFirstParam = false;
-        return url + '?' + key + '=' + value;
-    } else {
-        return url + '&' + key + '=' + value;
-    }
-} */}
+var formFields = []
 window.onload = function() {
 	var loadFormUrl = serverUrl + getFormsUrl;
 	callApi({
@@ -95,30 +85,48 @@ window.onload = function() {
                   }
 		}
 	});
-	// var searchParams = new URLSearchParams(new URL(window.location.href).search);
 	var loadUrl = serverUrl + getEmployeesUrl;
-	// for (let key in filter) {
-      //   if (filter.hasOwnProperty(key)) {
-	// 		var queryKey = searchParams.get(key);
-	// 		if (queryKey) {
-	// 			loadUrl = appendQueryParam(loadUrl, key, queryKey);
-	// 		}
-// 	}
-	// }
 	var searchParams = new URLSearchParams(new URL(window.location.href).search);
 	var form = searchParams.get('form');
 	if (form) {
 		if (form != '') {
-			loadUrl = loadUrl + '?form=' + form
-			callApi({
-				url: loadUrl,
-				method: 'GET',
+			loadUrlBase = loadUrl + '?form=' + form
+			getFormFieldsUrlOrg = getFormFieldsUrl.replace('<form_id>', form);
+    			callApi({
+	    			url: serverUrl + getFormFieldsUrlOrg,
+	    			method: 'GET',
 				success: function(response) {
-					if (response.status_code === 200) {
-						if (response.data.count === 0 ){
-							showEmptyDataMessage()
-						} else populateTable(response.data);
-					}
+					formFields = response
+					formFields.forEach(function(field) {
+						key = field.label.toLowerCase().replace(/\s+/g, '_')
+						var queryKey = searchParams.get(key);
+						if (queryKey) {
+							loadUrlBase = loadUrlBase + `&${key}=` + queryKey
+						}
+					});
+					callApi({
+						url: loadUrlBase,
+						method: 'GET',
+						success: function(response) {
+							if (response.status_code === 200) {
+								if (response.data.count === 0 ){
+									showEmptyDataMessage()
+									setFormFieldFilter(formFields);
+								} else {
+									populateTable(response.data);
+									setFormFieldFilter(formFields);
+								}
+							}
+						},
+						error: function(xhr, status, error) {
+							if (xhr.status === 401 || xhr.status === 403) {
+								window.location.href = dashboardUrl
+							} else {
+								showEmptyDataMessage()
+								toastr.error("Something went wrong please try again");
+							}
+						}
+					});
 				},
 				error: function(xhr, status, error) {
 					if (xhr.status === 401 || xhr.status === 403) {
@@ -129,21 +137,13 @@ window.onload = function() {
 					}
 				}
 			});
+
 		} else {
 			showEmptyDataMessage()
 		}
 	} else {
 		showEmptyDataMessage()
 	}
-
-	// for (let key in filter) {
-      //   if (filter.hasOwnProperty(key)) {
-	// 		const initialFilterValue = getQueryParam(key);
-	// 		if (initialFilterValue) {
-	// 			document.getElementById(key).value = initialFilterValue;
-	// 		}
-	// 	}
-	// }
 };
 
 function updateQueryParam(key, value) {
@@ -151,17 +151,6 @@ function updateQueryParam(key, value) {
 	if (value) url.searchParams.set(key, value);
     else url.searchParams.delete(key);
     window.history.pushState({ path: url.href }, '', url.href);
-}
-
-if (document.getElementById('filter-button')) {
-      document.getElementById('filter-button').addEventListener('click', function() {
-            var formData = new FormData(document.getElementById('filter-form'))
-            for (let [name, value] of formData.entries()) {
-              if (name == 'csrfmiddlewaretoken') continue
-                  else updateQueryParam(name, value);
-          }
-            window.location.reload();
-      });
 }
 
 if (document.getElementById('filter-clear-button')) {
@@ -288,6 +277,63 @@ function loadPage(url) {
 	});
 }
 
+function setFormFieldFilter (formFields) {
+	if (formFields.count != 0 ){
+		var filterForm = document.getElementById('filter-form');
+		if (filterForm) {
+			filterForm.innerHTML = '';
+			formFields.forEach(function(field) {
+				var itemDiv = document.createElement('div');
+				itemDiv.className = 'item';
+				var label = document.createElement('label');
+				label.className = 'item-label';
+				label.style.opacity = '1.5';
+				label.textContent = field.label;
+				itemDiv.appendChild(label);
+				var inputDiv = document.createElement('div');
+				inputDiv.className = 'position-relative';
+				var input = document.createElement('input');
+				input.name = field.label.toLowerCase().replace(/\s+/g, '_');
+				input.className = 'w-100';
+				input.id = field.label.toLowerCase().replace(/\s+/g, '_');
+				if (field.field_type === 'text' || field.field_type === 'number' || field.field_type === 'date' || field.field_type === 'password') {
+					input.type = field.field_type;
+				} else if (field.field_type === 'textarea') {
+					input = document.createElement('textarea');
+					input.className = 'form-control w-100 item-input';
+				} else if (field.field_type === 'checkbox') {
+					input.type = 'checkbox';
+				}
+				inputDiv.appendChild(input);
+				var icon = document.createElement('i');
+				icon.className = field.class || 'item-icn'; // Use provided class or default
+				inputDiv.appendChild(icon);
+				itemDiv.appendChild(inputDiv);
+				filterForm.appendChild(itemDiv);
+
+				var key = field.label.toLowerCase().replace(/\s+/g, '_')
+				const initialFilterValue = getQueryParam(key);
+				if (initialFilterValue) {
+					const element = document.getElementById(key);
+					if (element) {
+						// when the field is checkbox, set checked property
+						if (field.field_type === 'checkbox') {
+							element.checked = initialFilterValue === 'true';
+						} else {
+							element.value = initialFilterValue;
+						}
+					}
+				}
+			});
+		}
+	} else {
+		var filterForm = document.getElementById('filter-form');
+		if (filterForm) {
+			filterForm.innerHTML = '';
+		}
+	}
+}
+
 function populateTable(dataResp) {
 	var data = dataResp.results
 	var pageObj = dataResp.page_obj
@@ -324,7 +370,33 @@ function populateTable(dataResp) {
 	var tableBody = document.querySelector("#m_table_1 tbody");
 	tableBody.innerHTML = "";
 	data.forEach(function(item, index) {
-		var row = document.createElement("tr");																														
+		var row = document.createElement("tr");
+		let td = document.createElement("td");
+		td.setAttribute("attr-id", item.id);
+
+		let div = document.createElement("div");
+		div.className = "form-check form-check-flat form-check-primary";
+
+		let label = document.createElement("label");
+		label.className = "form-check-label m-checkbox m-checkbox--single m-checkbox--solid m-checkbox--brand";
+
+		let input = document.createElement("input");
+		input.type = "checkbox";
+		input.name = "bulk_id";
+		input.id = "option" + item.id;
+		input.value = item.id;
+		input.className = "form-check-input bulk-checkbox m-checkable";
+
+		let icon = document.createElement("i");
+		icon.className = "input-helper";
+
+		label.appendChild(input);
+		label.appendChild(icon);
+		div.appendChild(label);
+		td.appendChild(div);
+
+		row.appendChild(td);
+
 		// Add index cell
 		var indexCell = document.createElement("td");
 		indexCell.textContent = index + 1;
@@ -350,7 +422,6 @@ function populateTable(dataResp) {
 		// Append the row to the table body
 		tableBody.appendChild(row);
 	});
-
 
 	var paginationHTML = generatePaginationHTML(dataResp);
 	var paginationBody = document.querySelector(".igl-pagination");
@@ -440,52 +511,54 @@ $('.bulk-action-button').click(function(e){
 	return true
 });
 
-{/* $(document).ready(function() {
-    for (let key in filter) {
-        if (filter.hasOwnProperty(key)) {
-            let value = filter[key];
-            if (value.type === 'autocomplete') {
-                $(`#${key}`).autocomplete({
-                    source: function (request, response) {
-                        $.getJSON(`${value.url}?q=` + request.term, function (data) {
-                            response($.map(data['results'], function (value, key) {
-                                return {
-									label: value['selected_text'],
-									value: value['text'],
-									evalue:value['id']
-								};
-                            }));
-                        });
-                    },
-                    select: function (event, ui) {
-                        event.stopPropagation();
-                    }
-                });
-            } else if (value.type === 'date') {
-                $(`#${key}`).datepicker({
-                    format: 'dd/mm/yyyy',
-					autoclose: true,
-					todayHighlight: true,
-                });
-            }
-        }
-    }
-	$(document).on('click', '.ui-datepicker-prev, .ui-datepicker-next', function(event) {
-		document.getElementById('dropdown-menu').style.display = 'block';
-	});
-
-	if (document.getElementById('dropdownMenuButton1')) {
-		if (document.getElementById('dropdownMenuButton1').classList.contains('show')) {
-		} else {
-			document.getElementById('dropdown-menu').style.removeProperty('display')
-		}
-	}
-}); */}
-
 document.getElementById('form-filter').addEventListener('change', function() {
     const selectedValue = this.value;
     updateQueryParam('form', selectedValue);
     window.location.reload();
+});
+
+document.getElementById('filter-button').addEventListener('click', function() {
+	const form = document.getElementById('filter-form');
+    	const inputs = form.querySelectorAll('input, select, textarea');
+
+	inputs.forEach(input => {
+		if (input.name === 'csrfmiddlewaretoken') return;
+
+		if (input.type === 'checkbox') {
+			updateQueryParam(input.name, input.checked ? 'true' : 'false');
+		} else {
+			updateQueryParam(input.name, input.value);
+		}
+	});
+	window.location.reload();
+});
+
+function removeQueryParam(key) {
+    const url = new URL(window.location.href);
+    url.searchParams.delete(key);
+    window.history.replaceState({}, '', url);
+}
+
+document.getElementById('filter-clear-button').addEventListener('click', function() {
+	const form = document.getElementById('filter-form');
+    	form.reset();
+
+    	const inputs = form.querySelectorAll('input, select, textarea');
+
+    	inputs.forEach(input => {
+		if (input.name === 'csrfmiddlewaretoken') return;
+
+		if (input.type === 'checkbox') {
+			removeQueryParam(input.name);
+		} else {
+			if (!input.value) {
+				removeQueryParam(input.name);
+			} else {
+				updateQueryParam(input.name, input.value);
+			}
+		}
+    	});
+	window.location.reload();
 });
 
 </script>

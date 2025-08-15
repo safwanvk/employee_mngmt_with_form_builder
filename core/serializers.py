@@ -24,9 +24,10 @@ class FormSerializer(serializers.ModelSerializer):
 
 class EmployeeSerializer(serializers.ModelSerializer):
       form_name = serializers.CharField(source='form.name', read_only=True)
+      fields_arr = FieldSerializer(many=True, read_only=True, source='form.fields')
       class Meta:
             model = Employee
-            fields = ['id','form','form_name','data','created_by','created_at','updated_at']
+            fields = ['id','form','form_name','data','created_by','created_at','updated_at', 'fields_arr']
             read_only_fields = ['created_by','created_at','updated_at']
 
 class EmployeeDeleteSerializer(serializers.Serializer):

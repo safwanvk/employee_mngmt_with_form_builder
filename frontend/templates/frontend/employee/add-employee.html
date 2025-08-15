@@ -274,8 +274,8 @@ $(document).ready(function(){
       const inputs = form.querySelectorAll('input, textarea, select');
       const data = {};
       inputs.forEach(el => {
-        if(el.type==='checkbox') data[el.name] = el.checked;
-        else data[el.name] = el.value;
+        if(el.type==='checkbox') data[el.name.toUpperCase()] = el.checked;
+        else data[el.name.toUpperCase()] = el.value;
       });
       return data;
     }
