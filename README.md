@@ -107,6 +107,6 @@ It contains reference images for:
 - Authentication flow (Register, Login, Profile, Change Password)
 - Dynamic Form Builder with Add Field + Drag-and-Drop
 - Employee Creation & Update screens
-- Employee Listing with search, filter, and delete actions
+- Employee Listing with filter, and delete actions
 
 You can open these images to quickly understand the application’s UI and flow.
